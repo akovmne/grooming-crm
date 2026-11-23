@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Grooming CRM - Klijenti & Psi</title>
+  <title>Grooming CRM - Klijenti & Psi (Cloud)</title>
   <meta name="theme-color" content="#4f46e5">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Grooming CRM">
-  
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -29,977 +29,695 @@
       }
     }
   </script>
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Firebase Compat SDKs (Firestore) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
   <style>
-    body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-    /* Custom scrollbars */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
-    ::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.4); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.7); }
-    .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-    .glass-nav { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); border-top: 1px solid rgba(255, 255, 255, 0.08); }
+    body {
+      -webkit-tap-highlight-color: transparent;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="h-full flex flex-col bg-slate-950 text-slate-100 overflow-x-hidden antialiased selection:bg-brand-500 selection:text-white">
+<body class="h-full flex flex-col font-sans antialiased selection:bg-brand-500 selection:text-white">
 
-  <!-- TOP APP BAR -->
-  <header class="sticky top-0 z-30 bg-slate-900/90 backdrop-blur-md border-b border-slate-800/80 px-4 py-3">
-    <div class="max-w-4xl mx-auto flex items-center justify-between gap-3">
-      <div class="flex items-center gap-2.5 cursor-pointer" onclick="switchTab('clients')">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-brand-500/20">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m0 0l-2-1m2 1v2.5M14 4l-2 1m0 0l-2-1m2 1v2.5M4 7l2-1m0 0l2 1m-2-1v2.5M12 21a9 9 0 110-18 9 9 0 010 18z" />
-          </svg>
+  <!-- Top Header -->
+  <header class="sticky top-0 z-30 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 py-3">
+    <div class="max-w-4xl mx-auto flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div class="w-9 h-9 rounded-xl bg-brand-600 flex items-center justify-center text-white font-bold shadow-lg shadow-brand-600/30 shrink-0">
+          🐾
         </div>
-        <div>
-          <h1 class="font-bold text-base tracking-tight text-white flex items-center gap-1.5">
-            Grooming CRM <span class="text-xs bg-brand-500/20 text-brand-300 font-semibold px-2 py-0.5 rounded-full border border-brand-500/30">Pro</span>
-          </h1>
-          <p class="text-xs text-slate-400">Baza klijenata & šišanja psa</p>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <h1 class="text-base sm:text-lg font-bold tracking-tight text-white leading-none">Grooming CRM</h1>
+            <button onclick="switchTab('cloud')" id="syncBadge" class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 hover:border-slate-500 transition flex items-center gap-1">
+              <span>Lokalno 💾</span>
+            </button>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1 truncate">Baza klijenata & šišanja pasa</p>
         </div>
       </div>
 
-      <div class="flex items-center gap-2">
-        <button onclick="openClientModal()" class="bg-brand-600 hover:bg-brand-500 text-white font-medium text-xs sm:text-sm px-3 py-2 rounded-xl flex items-center gap-1.5 shadow-lg shadow-brand-600/30 transition active:scale-95">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-          <span>Novi klijent</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- SEARCH BAR -->
-    <div class="max-w-4xl mx-auto mt-3">
-      <div class="relative">
-        <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Pretraži po vlasniku, imenu psa, rasi ili telefonu..." 
-               class="w-full bg-slate-950/80 text-sm text-slate-100 placeholder-slate-500 pl-10 pr-10 py-2.5 rounded-xl border border-slate-800 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition shadow-inner">
-        <div class="absolute left-3.5 top-3 text-slate-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-          </svg>
-        </div>
-        <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-2.5 text-slate-400 hover:text-white p-0.5 rounded-full">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
-      </div>
+      <button onclick="openClientModal()" class="bg-brand-600 hover:bg-brand-500 active:scale-95 transition text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-xl shadow-lg shadow-brand-600/25 shrink-0 flex items-center gap-1.5">
+        <span>+ Novi klijent</span>
+      </button>
     </div>
   </header>
 
-  <!-- MAIN CONTENT AREA -->
-  <main class="flex-1 max-w-4xl w-full mx-auto p-4 pb-24 overflow-y-auto">
-    
-    <!-- TAB 1: CLIENTS LIST -->
-    <section id="tab-clients" class="space-y-4">
-      
-      <!-- Filter chips & Stats -->
-      <div class="flex items-center justify-between flex-wrap gap-2 text-xs">
-        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full">
-          <button onclick="setFilter('all')" id="filter-all" class="filter-btn active bg-slate-800 text-white px-3 py-1.5 rounded-lg border border-slate-700 font-medium">Svi (<span id="count-all">0</span>)</button>
-          <button onclick="setFilter('recent')" id="filter-recent" class="filter-btn bg-slate-900 text-slate-400 px-3 py-1.5 rounded-lg border border-slate-800 font-medium">Nedavno šišani (<span id="count-recent">0</span>)</button>
-          <button onclick="setFilter('due')" id="filter-due" class="filter-btn bg-slate-900 text-slate-400 px-3 py-1.5 rounded-lg border border-slate-800 font-medium">Zreli za šišanje (<span id="count-due">0</span>)</button>
-          <button onclick="setFilter('overdue')" id="filter-overdue" class="filter-btn bg-slate-900 text-slate-400 px-3 py-1.5 rounded-lg border border-slate-800 font-medium text-rose-400">Kasni >60d (<span id="count-overdue">0</span>)</button>
-        </div>
-        <div class="text-slate-400 hidden sm:block text-xs">
-          Prikazano: <span id="displayedCount" class="text-slate-200 font-semibold">0</span>
-        </div>
-      </div>
+  <!-- Main Content Area -->
+  <main class="flex-1 overflow-y-auto px-4 py-4 pb-24">
+    <div class="max-w-4xl mx-auto">
 
-      <!-- Clients Cards List Container -->
-      <div id="clientsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <!-- Rendered dynamically -->
-      </div>
-
-      <!-- Empty state -->
-      <div id="emptyState" class="hidden text-center py-12 px-4 glass-card rounded-2xl">
-        <div class="w-16 h-16 bg-slate-800 text-slate-500 rounded-full flex items-center justify-center mx-auto mb-3">
-          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
+      <!-- TAB 1: KLIJENTI -->
+      <section id="tab-clients" class="space-y-4">
+        <!-- Search Bar -->
+        <div class="relative">
+          <span class="absolute inset-y-0 left-3.5 flex items-center text-slate-400 pointer-events-none">🔍</span>
+          <input type="text" id="searchInput" oninput="renderClients()" placeholder="Pretraži po vlasniku, imenu psa, rasi ili telefonu..."
+            class="w-full bg-slate-800/80 border border-slate-700/80 rounded-xl pl-10 pr-10 py-3 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition">
+          <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-white text-sm">✕</button>
         </div>
-        <h3 class="text-base font-semibold text-white">Nema pronađenih klijenata</h3>
-        <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto">Dodajte novog klijenta ručno, uvozom iz CSV/vCard fajla ili učitajte demo podatke.</p>
-        <div class="mt-4 flex items-center justify-center gap-2 flex-wrap">
-          <button onclick="openClientModal()" class="bg-brand-600 text-white text-xs px-4 py-2 rounded-xl font-medium shadow-md">Dodaj klijenta</button>
-          <button onclick="loadDemoData()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-4 py-2 rounded-xl border border-slate-700 font-medium">Učitaj Demo podatke</button>
-        </div>
-      </div>
-    </section>
 
-    <!-- TAB 2: REMINDERS / PODSJETNICI -->
-    <section id="tab-reminders" class="hidden space-y-4">
-      <div class="glass-card p-4 rounded-2xl border border-amber-500/20 bg-amber-500/5">
-        <div class="flex items-start gap-3">
-          <div class="p-2.5 bg-amber-500/20 text-amber-400 rounded-xl">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+        <!-- Filter Pills -->
+        <div class="flex items-center justify-between gap-2 overflow-x-auto no-scrollbar pb-1">
+          <div class="flex items-center gap-2">
+            <button onclick="setFilter('all')" id="filter-all" class="filter-pill px-3 py-1.5 rounded-lg text-xs font-medium bg-brand-600 text-white transition whitespace-nowrap">Svi (<span id="count-all">0</span>)</button>
+            <button onclick="setFilter('recent')" id="filter-recent" class="filter-pill px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap">Nedavno šišani (<span id="count-recent">0</span>)</button>
+            <button onclick="setFilter('due')" id="filter-due" class="filter-pill px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap">Zreli za šišanje (<span id="count-due">0</span>)</button>
+            <button onclick="setFilter('overdue')" id="filter-overdue" class="filter-pill px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition whitespace-nowrap">Kasni &gt;60d (<span id="count-overdue">0</span>)</button>
           </div>
-          <div>
-            <h2 class="font-bold text-white text-sm">Podsjetnici za šišanje</h2>
-            <p class="text-xs text-slate-300 mt-0.5">Klijenti čiji psi nisu šišani više od 35 dana. Jednim klikom pošaljite unaprijed pripremljenu WhatsApp ili SMS poruku za zakazivanje termina.</p>
+          <span class="text-xs text-slate-400 whitespace-nowrap hidden sm:inline">Prikazano: <strong id="shownCount" class="text-white">0</strong></span>
+        </div>
+
+        <!-- Client Cards Container -->
+        <div id="clientsList" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden bg-slate-800/40 border border-slate-800 rounded-2xl p-8 text-center space-y-3">
+          <div class="w-12 h-12 rounded-full bg-slate-800 mx-auto flex items-center justify-center text-2xl">🐶</div>
+          <h3 class="text-base font-semibold text-white">Nema pronađenih klijenata</h3>
+          <p class="text-xs text-slate-400 max-w-sm mx-auto">Dodajte novog klijenta ručno, uvozom iz CSV/vCard fajla ili povežite Cloud sinhronizaciju.</p>
+          <div class="pt-2 flex flex-wrap justify-center gap-2">
+            <button onclick="openClientModal()" class="bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition">Dodaj klijenta</button>
+            <button onclick="loadDemoData()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-4 py-2.5 rounded-xl border border-slate-700 transition">Učitaj Demo podatke</button>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div id="remindersContainer" class="space-y-3">
-        <!-- Rendered dynamically -->
-      </div>
-    </section>
-
-    <!-- TAB 3: IMPORT & EXPORT -->
-    <section id="tab-import" class="hidden space-y-4">
-      <!-- DEMO LOADER CARD -->
-      <div class="glass-card p-4 rounded-2xl flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <h3 class="font-bold text-sm text-white">Brzi Demo Podaci</h3>
-          <p class="text-xs text-slate-400">Učitajte 5 primjeraka klijenata sa psima radi testiranja aplikacije.</p>
+      <!-- TAB 2: PODSJETNICI -->
+      <section id="tab-reminders" class="hidden space-y-4">
+        <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4">
+          <h2 class="text-base font-bold text-white">Podsjetnici za šišanje</h2>
+          <p class="text-xs text-slate-400 mt-1">Klijenti čiji psi nisu šišani duže od 35 dana. Kliknite na dugme da pošaljete gotovu WhatsApp poruku.</p>
         </div>
-        <button onclick="loadDemoData()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs px-3.5 py-2 rounded-xl font-medium transition active:scale-95">
-          ⚡ Učitaj Demo Klijente
-        </button>
-      </div>
+        <div id="remindersList" class="space-y-3"></div>
+      </section>
 
-      <!-- IMPORT FILE CARD -->
-      <div class="glass-card p-5 rounded-2xl space-y-4">
-        <h3 class="font-bold text-base text-white flex items-center gap-2">
-          <svg class="w-5 h-5 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-          </svg>
-          Uvoz Klijenata (CSV ili iPhone vCard .vcf)
-        </h3>
-        <p class="text-xs text-slate-400">
-          Izaberite `.csv` tabelu sa kontaktima ili `.vcf` (vCard) fajl izvezen sa Vašeg telefona. Aplikacija automatski prepoznaje zaglavlja i mapira kolone.
-        </p>
-
-        <div class="border-2 border-dashed border-slate-700 hover:border-brand-500 transition rounded-2xl p-6 text-center cursor-pointer bg-slate-900/50" onclick="document.getElementById('fileInput').click()">
-          <input type="file" id="fileInput" accept=".csv, .vcf, text/vcard, text/csv" class="hidden" onchange="handleFileUpload(event)">
-          <div class="w-12 h-12 bg-brand-500/10 text-brand-400 rounded-full flex items-center justify-center mx-auto mb-2">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-            </svg>
-          </div>
-          <span class="text-xs font-semibold text-brand-300">Kliknite za odabir CSV ili VCF fajla</span>
-          <p class="text-[11px] text-slate-500 mt-1">Podržava Excel CSV, Google Contacts CSV i iPhone vCard (.vcf)</p>
-        </div>
-      </div>
-
-      <!-- EXPORT CARDS -->
-      <div class="glass-card p-5 rounded-2xl space-y-4">
-        <h3 class="font-bold text-base text-white flex items-center gap-2">
-          <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-          </svg>
-          Izvoz Baze i Sinhronizacija Kontakata
-        </h3>
-        <p class="text-xs text-slate-400">
-          Preuzmite rezervnu kopiju svih Vaših klijenata ili izvezite vCard `.vcf` fajl koji u imenu kontakta direktno sadrži i ime i rasu psa za Vaš iPhone!
-        </p>
-
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <!-- Export iPhone vCard -->
-          <button onclick="exportToVCard()" class="bg-slate-900 hover:bg-slate-800 border border-emerald-500/40 p-3 rounded-xl flex flex-col items-center text-center transition group">
-            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-2 group-hover:scale-110 transition">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
+      <!-- TAB 3: CLOUD SYNC -->
+      <section id="tab-cloud" class="hidden space-y-4">
+        <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 sm:p-5 space-y-4">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <h2 class="text-base font-bold text-white flex items-center gap-2">☁️ Cloud Sinhronizacija (Firebase)</h2>
+              <p class="text-xs text-slate-400 mt-1">Povežite desktop i iPhone u realnom vremenu preko vaše besplatne Firebase Firestore baze.</p>
             </div>
-            <span class="text-xs font-bold text-slate-100">iPhone vCard (.vcf)</span>
-            <span class="text-[10px] text-slate-400 mt-1">Sa imenom psa u nazivu za Caller ID</span>
-          </button>
-
-          <!-- Export CSV -->
-          <button onclick="exportToCSV()" class="bg-slate-900 hover:bg-slate-800 border border-slate-700 p-3 rounded-xl flex flex-col items-center text-center transition group">
-            <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center mb-2 group-hover:scale-110 transition">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            </div>
-            <span class="text-xs font-bold text-slate-100">Izvoz u CSV</span>
-            <span class="text-[10px] text-slate-400 mt-1">Za Excel ili Google Sheets</span>
-          </button>
-
-          <!-- Export JSON Backup -->
-          <button onclick="exportToJSON()" class="bg-slate-900 hover:bg-slate-800 border border-slate-700 p-3 rounded-xl flex flex-col items-center text-center transition group">
-            <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center mb-2 group-hover:scale-110 transition">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            </div>
-            <span class="text-xs font-bold text-slate-100">JSON Rezervna kopija</span>
-            <span class="text-[10px] text-slate-400 mt-1">Kompletna arhiva sa slikama</span>
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 4: IOS SETUP & GUIDE -->
-    <section id="tab-ios" class="hidden space-y-4">
-      <div class="glass-card p-5 rounded-2xl space-y-4 border border-brand-500/30">
-        <h2 class="text-lg font-bold text-white flex items-center gap-2">
-          <span>📲</span> Kako podesiti prepoznavanje poziva na iPhone-u
-        </h2>
-        
-        <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
-          <div class="p-3 bg-brand-500/10 rounded-xl border border-brand-500/20 text-slate-200">
-            <strong class="text-brand-300 block mb-1 text-sm">💡 Važna napomena o iOS sigurnosti:</strong>
-            Apple iOS iz bezbjednosnih razloga zabranjuje web aplikacijama (PWA) u pozadini da slušaju dolazne pozive i poruke te automatski izbacuju prozor sa slikom. Međutim, ova aplikacija rješava taj problem na <strong>2 jednostavna načina</strong>:
+            <span id="cloudPanelStatus" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-900 text-slate-300 border border-slate-700 shrink-0">Nije povezano</span>
           </div>
 
-          <!-- Method 1 -->
-          <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-            <h3 class="font-bold text-emerald-400 text-sm flex items-center gap-1.5">
-              <span>1️⃣</span> Metoda 1: Sinhronizacija imena u kontakte telefona (Preporučeno!)
-            </h3>
-            <p>
-              Idite na tab <strong>Import / Export</strong> i kliknite na <strong>"iPhone vCard (.vcf)"</strong>.
-            </p>
-            <ol class="list-decimal list-inside space-y-1 text-slate-300 pl-1">
-              <li>Preuzmite generisani `.vcf` fajl na iPhone.</li>
-              <li>Otvorite preuzeti fajl i izaberite <em>"Dodaj sve kontakte"</em> ili <em>"Spoji sa kontaktima"</em>.</li>
-              <li>Sada, kada Vas klijent pozove ili pošalje WhatsApp/Viber/iMessage poruku, na ekranu poziva će pisati: <br><code class="text-emerald-300 font-mono bg-slate-950 px-2 py-0.5 rounded text-[11px] block mt-1">Petar Petrović (Bobi - Maltezer)</code></li>
-            </ol>
-          </div>
-
-          <!-- Method 2 -->
-          <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-            <h3 class="font-bold text-brand-400 text-sm flex items-center gap-1.5">
-              <span>2️⃣</span> Metoda 2: Brzi pristup kartonu preko pretrage i URL linka
-            </h3>
-            <p>
-              Aplikacija podržava direktno otvaranje preko pozivnog broja ili imena pomoću URL linka:
-            </p>
-            <div class="bg-slate-950 p-2 rounded-lg font-mono text-[11px] text-brand-300 break-all border border-slate-800">
-              https://vaša-stranica.github.io/?q=069123456
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1">1. Room ID (Naziv/šifra vaše baze - mora biti isti na svim uređajima)</label>
+              <input type="text" id="cloudRoomId" placeholder="npr. groomingpg-glavna"
+                class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500">
             </div>
-            <p>
-              Možete napraviti brzu iOS Shortcuts (Prečice) radnju koja na dodir kopiranog broja otvara karton tog klijenta u 1 sekundi!
-            </p>
-          </div>
 
-          <!-- Method 3 -->
-          <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
-            <h3 class="font-bold text-amber-400 text-sm flex items-center gap-1.5">
-              <span>3️⃣</span> Dodajte aplikaciju na Početni Ekran (Home Screen)
-            </h3>
-            <p>
-              U Safari pregledaču na iPhone-u kliknite na dugme <strong>Share (Kvadrat sa strelicom na gore)</strong> u dnu ekrana, pa izaberite <strong>"Add to Home Screen" (Dodaj na početni ekran)</strong>. Aplikacija će raditi kao prava mobilna aplikacija i raditi i bez interneta (offline)!
-            </p>
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1">2. Firebase Config objekat (nalijepite iz Project Settings -> Your apps)</label>
+              <textarea id="cloudFirebaseConfig" rows="6" placeholder='{\n  "apiKey": "AIzaSy...",\n  "authDomain": "groomingpg-crm.firebaseapp.com",\n  "projectId": "groomingpg-crm",\n  ...\n}'
+                class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs font-mono text-slate-200 placeholder-slate-600 focus:outline-none focus:border-brand-500"></textarea>
+            </div>
+
+            <div class="flex flex-wrap gap-2 pt-1">
+              <button onclick="saveAndConnectCloud()" class="bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition">Sačuvaj i poveži Cloud</button>
+              <button onclick="pushLocalToCloud()" id="pushCloudBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition">⬆️ Prebaci lokalne klijente u oblak</button>
+              <button onclick="pullFromCloudManual()" id="pullCloudBtn" class="bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition">⬇️ Preuzmi iz oblaka</button>
+              <button onclick="disconnectCloud()" class="bg-rose-950/60 hover:bg-rose-900/60 text-rose-300 border border-rose-800/60 text-xs font-semibold px-3.5 py-2.5 rounded-xl transition">Odjavi Cloud</button>
+            </div>
+            <p id="cloudFeedback" class="text-xs text-slate-400 hidden"></p>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
+      <!-- TAB 4: IMPORT / EXPORT -->
+      <section id="tab-io" class="hidden space-y-4">
+        <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 space-y-3">
+          <h2 class="text-base font-bold text-white">Uvoz kontakata (Import)</h2>
+          <p class="text-xs text-slate-400">Uvezite klijente iz CSV tabele ili direktno iz iPhone vCard (.vcf) fajla.</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <label class="cursor-pointer bg-slate-900/80 hover:bg-slate-900 border border-dashed border-slate-600 rounded-xl p-4 text-center transition">
+              <div class="text-xl mb-1">📄</div>
+              <div class="text-xs font-semibold text-white">Uvezi CSV fajl</div>
+              <div class="text-[11px] text-slate-400 mt-0.5">Ime, Prezime, Telefon, Pas, Rasa...</div>
+              <input type="file" accept=".csv,text/csv" onchange="handleCSVImport(event)" class="hidden">
+            </label>
+            <label class="cursor-pointer bg-slate-900/80 hover:bg-slate-900 border border-dashed border-slate-600 rounded-xl p-4 text-center transition">
+              <div class="text-xl mb-1">📇</div>
+              <div class="text-xs font-semibold text-white">Uvezi iPhone Kontakte (.vcf)</div>
+              <div class="text-[11px] text-slate-400 mt-0.5">vCard izvoz iz iCloud / Kontakti</div>
+              <input type="file" accept=".vcf,text/vcard" onchange="handleVCFImport(event)" class="hidden">
+            </label>
+          </div>
+        </div>
+
+        <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 space-y-3">
+          <h2 class="text-base font-bold text-white">Izvoz i iPhone Caller ID (.vcf)</h2>
+          <p class="text-xs text-slate-400">Preuzmite kontakte formatirane kao <strong class="text-slate-200">Ime Prezime (Ime Psa - Rasa)</strong> da bi vam iPhone prilikom poziva ili poruke odmah prikazao o kom psu se radi.</p>
+          <div class="flex flex-wrap gap-2 pt-1">
+            <button onclick="exportVCF()" class="bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition">📲 Izvezi za iPhone Kontakte (.vcf)</button>
+            <button onclick="exportCSV()" class="bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition">📊 Izvezi CSV tabelu</button>
+            <button onclick="exportJSON()" class="bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition">💾 Backup JSON</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: IPHONE UPUTSTVO -->
+      <section id="tab-guide" class="hidden space-y-4">
+        <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 space-y-3 text-xs text-slate-300 leading-relaxed">
+          <h2 class="text-base font-bold text-white">Kako podesiti iPhone za brz pristup</h2>
+          <p><strong class="text-white">1. Instalacija kao aplikacija (PWA):</strong> Otvorite ovaj sajt u <em>Safariju</em> na iPhone-u, kliknite na ikonicu za dijeljenje (kvadrat sa strelicom nagore) i izaberite <strong>Add to Home Screen</strong>.</p>
+          <p><strong class="text-white">2. Prepoznavanje poziva i poruka (WhatsApp / Viber / iMessage):</strong> iOS ne dozvoljava web stranicama da čitaju dolazne pozive u pozadini. Rješenje je u kartici <strong>Import / Export -> Izvezi za iPhone Kontakte (.vcf)</strong>. Kada taj fajl otvorite na iPhone-u i sačuvate kontakte, svaki poziv ili poruka će na ekranu prikazati: <code class="bg-slate-900 px-1.5 py-0.5 rounded text-brand-300">Marko Marković (Bobi - Pudla)</code>.</p>
+          <p><strong class="text-white">3. Direktno otvaranje kartona preko linka:</strong> Dodavanjem <code class="bg-slate-900 px-1.5 py-0.5 rounded text-brand-300">?q=Bobi</code> ili broja telefona na kraj URL-a aplikacija automatski otvara tog klijenta.</p>
+        </div>
+      </section>
+
+    </div>
   </main>
 
-  <!-- BOTTOM NAVIGATION BAR -->
-  <nav class="fixed bottom-0 left-0 right-0 z-30 glass-nav px-2 py-2">
-    <div class="max-w-md mx-auto grid grid-cols-4 gap-1 text-center">
-      <button onclick="switchTab('clients')" id="nav-clients" class="nav-item active flex flex-col items-center py-1 px-2 rounded-xl text-brand-400 transition">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-        </svg>
-        <span class="text-[10px] font-medium mt-1">Klijenti</span>
+  <!-- Bottom Navigation Bar -->
+  <nav class="fixed bottom-0 inset-x-0 z-30 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 px-2 py-2">
+    <div class="max-w-4xl mx-auto grid grid-cols-5 gap-1">
+      <button onclick="switchTab('clients')" id="nav-clients" class="nav-btn flex flex-col items-center justify-center py-1 rounded-xl text-brand-400">
+        <span class="text-base">👥</span>
+        <span class="text-[10px] font-medium mt-0.5">Klijenti</span>
       </button>
-
-      <button onclick="switchTab('reminders')" id="nav-reminders" class="nav-item flex flex-col items-center py-1 px-2 rounded-xl text-slate-400 transition hover:text-slate-200">
-        <div class="relative">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-          <span id="nav-reminder-badge" class="hidden absolute -top-1 -right-1 bg-rose-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
-        </div>
-        <span class="text-[10px] font-medium mt-1">Podsjetnici</span>
+      <button onclick="switchTab('reminders')" id="nav-reminders" class="nav-btn flex flex-col items-center justify-center py-1 rounded-xl text-slate-400 hover:text-slate-200">
+        <span class="text-base">⏰</span>
+        <span class="text-[10px] font-medium mt-0.5">Podsjetnici</span>
       </button>
-
-      <button onclick="switchTab('import')" id="nav-import" class="nav-item flex flex-col items-center py-1 px-2 rounded-xl text-slate-400 transition hover:text-slate-200">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>
-        </svg>
-        <span class="text-[10px] font-medium mt-1">Import / Export</span>
+      <button onclick="switchTab('cloud')" id="nav-cloud" class="nav-btn flex flex-col items-center justify-center py-1 rounded-xl text-slate-400 hover:text-slate-200">
+        <span class="text-base">☁️</span>
+        <span class="text-[10px] font-medium mt-0.5">Cloud Sync</span>
       </button>
-
-      <button onclick="switchTab('ios')" id="nav-ios" class="nav-item flex flex-col items-center py-1 px-2 rounded-xl text-slate-400 transition hover:text-slate-200">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-        </svg>
-        <span class="text-[10px] font-medium mt-1">iPhone Uputstvo</span>
+      <button onclick="switchTab('io')" id="nav-io" class="nav-btn flex flex-col items-center justify-center py-1 rounded-xl text-slate-400 hover:text-slate-200">
+        <span class="text-base">⇄</span>
+        <span class="text-[10px] font-medium mt-0.5">Import/Export</span>
+      </button>
+      <button onclick="switchTab('guide')" id="nav-guide" class="nav-btn flex flex-col items-center justify-center py-1 rounded-xl text-slate-400 hover:text-slate-200">
+        <span class="text-base">📱</span>
+        <span class="text-[10px] font-medium mt-0.5">iPhone</span>
       </button>
     </div>
   </nav>
 
-  <!-- MODAL: ADD / EDIT CLIENT -->
-  <div id="clientModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 hidden overflow-y-auto">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden my-auto">
-      
-      <!-- Modal Header -->
-      <div class="px-5 py-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-950/50">
-        <h3 id="modalTitle" class="font-bold text-white text-base">Novi Klijent & Pas</h3>
-        <button onclick="closeClientModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+  <!-- ADD / EDIT CLIENT MODAL -->
+  <div id="clientModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-lg max-h-[92vh] rounded-t-3xl sm:rounded-3xl flex flex-col overflow-hidden shadow-2xl">
+      <div class="px-5 py-4 border-b border-slate-800 flex items-center justify-between">
+        <h3 id="modalTitle" class="text-base font-bold text-white">Novi klijent</h3>
+        <button onclick="closeClientModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">✕</button>
       </div>
 
-      <!-- Modal Body (Form) -->
-      <form id="clientForm" onsubmit="saveClient(event)" class="p-5 space-y-4 overflow-y-auto flex-1">
+      <form id="clientForm" onsubmit="saveClient(event)" class="p-5 overflow-y-auto space-y-4 text-sm">
         <input type="hidden" id="clientId">
 
-        <!-- VLASNIK SEKCIJA -->
-        <div class="space-y-3">
-          <h4 class="text-xs font-bold text-brand-400 uppercase tracking-wider flex items-center gap-1.5">
-            👤 Podaci o Vlasniku
-          </h4>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-medium text-slate-300 mb-1">Ime *</label>
-              <input type="text" id="firstName" required placeholder="npr. Marko" class="w-full bg-slate-950 text-xs text-white p-2.5 rounded-xl border border-slate-800 focus:border-brand-500 focus:outline-none">
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-slate-300 mb-1">Prezime</label>
-              <input type="text" id="lastName" placeholder="npr. Marković" class="w-full bg-slate-950 text-xs text-white p-2.5 rounded-xl border border-slate-800 focus:border-brand-500 focus:outline-none">
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div>
-              <label class="block text-xs font-medium text-slate-300 mb-1">Broj telefona *</label>
-              <input type="tel" id="phone" required placeholder="069123456" class="w-full bg-slate-950 text-xs text-white p-2.5 rounded-xl border border-slate-800 focus:border-brand-500 focus:outline-none">
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-slate-300 mb-1">WhatsApp Broj</label>
-              <input type="tel" id="whatsapp" placeholder="Ostaviti prazno ako je isti" class="w-full bg-slate-950 text-xs text-white p-2.5 rounded-xl border border-slate-800 focus:border-brand-500 focus:outline-none">
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-slate-300 mb-1">Viber Broj</label>
-              <input type="tel" id="viber" placeholder="Ostaviti prazno ako je isti" class="w-full bg-slate-950 text-xs text-white p-2.5 rounded-xl border border-slate-800 focus:border-brand-500 focus:outline-none">
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-medium text-slate-300 mb-1">Email adresa</label>
-              <input type="email" id="email" placeholder="marko@gmail.com" class="w-full bg-slate-950 text-xs text-white p-2.5 rounded-xl border border-slate-800 focus:border-brand-500 focus:outline-none">
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-slate-300 mb-1">Instagram (@korisničko ime ili link)</label>
-              <input type="text" id="instagram" placeholder="@grooming_studio" class="w-full bg-slate-950 text-xs text-white p-2.5 rounded-xl border border-slate-800 focus:border-brand-500 focus:outline-none">
-            </div>
+        <!-- Dog Photo -->
+        <div class="flex items-center gap-4">
+          <div id="photoPreview" class="w-16 h-16 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-2xl overflow-hidden shrink-0">🐶</div>
+          <div class="space-y-1">
+            <label class="inline-block cursor-pointer bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold px-3 py-2 rounded-xl border border-slate-700 transition">
+              📷 Dodaj sliku psa
+              <input type="file" accept="image/*" onchange="handlePhotoUpload(event)" class="hidden">
+            </label>
+            <p class="text-[11px] text-slate-400">Automatski se kompresuje za brzu Cloud sinhronizaciju.</p>
           </div>
         </div>
 
-        <hr class="border-slate-800">
-
-        <!-- PAS SEKCIJA -->
-        <div class="space-y-3">
-          <h4 class="text-xs font-bold text-brand-400 uppercase tracking-wider flex items-center gap-1.5">
-            🐾 Podaci o Psu
-          </h4>
-
-          <!-- PHOTO UPLOAD & PREVIEW -->
-          <div class="flex items-center gap-4">
-            <div id="photoPreview" class="w-16 h-16 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center text-slate-600 overflow-hidden shrink-0">
-              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            </div>
-            <div class="flex-1">
-              <label class="block text-xs font-medium text-slate-300 mb-1">Fotografija Psa</label>
-              <input type="file" id="dogPhotoInput" accept="image/*" onchange="previewAndCompressPhoto(event)" class="w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-brand-300 hover:file:bg-slate-700">
-              <span class="text-[10px] text-slate-500">Fotografija se automatski optimizuje radi bržeg rada.</span>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-medium text-slate-300 mb-1">Ime psa *</label>
-              <input type="text" id="dogName" required placeholder="npr. Bobi" class="w-full bg-slate-950 text-xs text-white p-2.5 rounded-xl border border-slate-800 focus:border-brand-500 focus:outline-none">
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-slate-300 mb-1">Rasa psa *</label>
-              <input type="text" id="dogBreed" required placeholder="npr. Maltezer, Pudla, Patuljasti Šnaucer..." class="w-full bg-slate-950 text-xs text-white p-2.5 rounded-xl border border-slate-800 focus:border-brand-500 focus:outline-none">
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-medium text-slate-300 mb-1">Tip dlake / Veličina</label>
-              <input type="text" id="coatType" placeholder="npr. Kovrdžava, Srednja veličina, Gusta poddlaka..." class="w-full bg-slate-950 text-xs text-white p-2.5 rounded-xl border border-slate-800 focus:border-brand-500 focus:outline-none">
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-slate-300 mb-1">Datum zadnjeg šišanja</label>
-              <input type="date" id="lastGroomDate" class="w-full bg-slate-950 text-xs text-white p-2.5 rounded-xl border border-slate-800 focus:border-brand-500 focus:outline-none">
-            </div>
-          </div>
-
+        <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-medium text-slate-300 mb-1">Ostali detalji & napomene (Nož / Agresivnost / Alergije)</label>
-            <textarea id="notes" rows="3" placeholder="npr. Nož 7mm za tijelo, šape makazama. Ne voli šišanje noktiju. Alergija na parfem." class="w-full bg-slate-950 text-xs text-white p-2.5 rounded-xl border border-slate-800 focus:border-brand-500 focus:outline-none"></textarea>
+            <label class="block text-xs text-slate-400 mb-1">Ime vlasnika *</label>
+            <input type="text" id="firstName" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:border-brand-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Prezime</label>
+            <input type="text" id="lastName" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:border-brand-500 focus:outline-none">
           </div>
         </div>
 
-        <div class="pt-3 border-t border-slate-800 flex items-center justify-end gap-2">
-          <button type="button" onclick="closeClientModal()" class="px-4 py-2 text-xs font-medium text-slate-400 hover:text-white rounded-xl">Otkaži</button>
-          <button type="submit" class="px-5 py-2 text-xs font-semibold bg-brand-600 hover:bg-brand-500 text-white rounded-xl shadow-lg shadow-brand-600/30 transition">Sačuvaj Klijenta</button>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Telefon *</label>
+            <input type="tel" id="phone" required placeholder="+382 69 ..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:border-brand-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Email</label>
+            <input type="email" id="email" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:border-brand-500 focus:outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">WhatsApp br.</label>
+            <input type="tel" id="whatsapp" placeholder="Ako je drugačiji" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-2.5 py-2 text-xs text-white focus:border-brand-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Viber br.</label>
+            <input type="tel" id="viber" placeholder="Ako je drugačiji" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-2.5 py-2 text-xs text-white focus:border-brand-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Instagram</label>
+            <input type="text" id="instagram" placeholder="@profil" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-2.5 py-2 text-xs text-white focus:border-brand-500 focus:outline-none">
+          </div>
+        </div>
+
+        <div class="border-t border-slate-800 pt-3 grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Ime psa *</label>
+            <input type="text" id="dogName" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:border-brand-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Rasa / Vrsta</label>
+            <input type="text" id="dogBreed" placeholder="npr. Maltezer, Pudla..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:border-brand-500 focus:outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Tip dlake / Veličina</label>
+            <input type="text" id="dogType" placeholder="npr. Kovrdžava / Mali" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:border-brand-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Datum zadnjeg šišanja</label>
+            <input type="date" id="lastGroomed" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:border-brand-500 focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Napomene (noževi mašinice, narav, alergije...)</label>
+          <textarea id="notes" rows="2" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:border-brand-500 focus:outline-none"></textarea>
+        </div>
+
+        <div class="pt-2 flex items-center justify-between gap-2">
+          <button type="button" id="deleteBtn" onclick="deleteCurrentClient()" class="hidden bg-rose-950 hover:bg-rose-900 text-rose-300 text-xs font-semibold px-3.5 py-2.5 rounded-xl transition">Obriši</button>
+          <div class="flex gap-2 ml-auto">
+            <button type="button" onclick="closeClientModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold px-4 py-2.5 rounded-xl transition">Otkaži</button>
+            <button type="submit" class="bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold px-5 py-2.5 rounded-xl transition">Sačuvaj</button>
+          </div>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- MODAL: CLIENT DETAILS DRAWER/CARD ("KARTON KLIJENTA") -->
-  <div id="detailModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 hidden overflow-y-auto">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden my-auto">
-      
-      <!-- Drawer Header -->
-      <div id="detailHeader" class="relative p-5 bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 border-b border-slate-800 flex items-start justify-between">
-        <div class="flex items-center gap-4">
-          <div id="detailDogPhoto" class="w-20 h-20 rounded-2xl bg-slate-800 border-2 border-brand-500/50 flex items-center justify-center text-3xl font-bold text-slate-400 overflow-hidden shadow-xl shrink-0">
-            🐶
-          </div>
-          <div>
-            <div class="flex items-center gap-2 flex-wrap">
-              <h2 id="detailDogName" class="text-xl font-extrabold text-white">Bobi</h2>
-              <span id="detailBadge" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Šišan prije 10 dana</span>
-            </div>
-            <p id="detailDogBreed" class="text-xs text-brand-300 font-medium">Maltezer • Srednja dlaka</p>
-            <p id="detailOwnerName" class="text-xs text-slate-400 mt-1 flex items-center gap-1">
-              <span>👤 Vlasnik:</span> <strong class="text-slate-200">Marko Marković</strong>
-            </p>
-          </div>
-        </div>
-
-        <button onclick="closeDetailModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-
-      <!-- Drawer Body -->
-      <div class="p-5 overflow-y-auto space-y-5 flex-1">
-        
-        <!-- QUICK ACTION BUTTONS (iPhone Ready) -->
-        <div>
-          <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Brze Akcije (1-Dodir)</h4>
-          <div class="grid grid-cols-5 gap-2">
-            <!-- Call -->
-            <a id="btnCall" href="#" class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition text-center">
-              <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
-              <span class="text-[10px] font-bold">Poziv</span>
-            </a>
-
-            <!-- SMS -->
-            <a id="btnSMS" href="#" class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500/20 transition text-center">
-              <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-              </svg>
-              <span class="text-[10px] font-bold">SMS</span>
-            </a>
-
-            <!-- WhatsApp -->
-            <a id="btnWA" href="#" target="_blank" class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-green-500/10 text-green-400 border border-green-500/20 hover:bg-green-500/20 transition text-center">
-              <span class="text-base mb-0.5">💬</span>
-              <span class="text-[10px] font-bold">WhatsApp</span>
-            </a>
-
-            <!-- Viber -->
-            <a id="btnViber" href="#" class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20 transition text-center">
-              <span class="text-base mb-0.5">🟣</span>
-              <span class="text-[10px] font-bold">Viber</span>
-            </a>
-
-            <!-- Instagram -->
-            <a id="btnIG" href="#" target="_blank" class="flex flex-col items-center justify-center p-2.5 rounded-xl bg-pink-500/10 text-pink-400 border border-pink-500/20 hover:bg-pink-500/20 transition text-center">
-              <span class="text-base mb-0.5">📸</span>
-              <span class="text-[10px] font-bold">Insta</span>
-            </a>
-          </div>
-        </div>
-
-        <!-- QUICK RECORD GROOMING BUTTON -->
-        <div class="glass-card p-4 rounded-xl border border-brand-500/30 bg-gradient-to-r from-brand-900/30 via-slate-900 to-slate-900 flex items-center justify-between flex-wrap gap-3">
-          <div>
-            <h4 class="text-xs font-bold text-white">Novo Šišanje Odrađeno Danas?</h4>
-            <p id="detailLastDateText" class="text-[11px] text-slate-400">Zadnji put: 12.05.2024.</p>
-          </div>
-          <button onclick="recordGroomingToday()" class="bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg shadow-brand-600/30 flex items-center gap-1.5 active:scale-95 transition">
-            <span>✂️</span> Zabilježi Današnje Šišanje
-          </button>
-        </div>
-
-        <!-- CLIENT & DOG DETAILS CARD -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1">
-            <span class="text-[10px] font-bold text-slate-400 uppercase">Kontakt Telefon</span>
-            <p id="detailPhone" class="text-sm font-semibold text-white">069123456</p>
-          </div>
-          <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1">
-            <span class="text-[10px] font-bold text-slate-400 uppercase">Email Adresa</span>
-            <p id="detailEmail" class="text-sm font-semibold text-white">Nije uneto</p>
-          </div>
-        </div>
-
-        <!-- NOTES & TEMPERAMENT -->
-        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1.5">
-          <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1">
-            📝 Napomene, Dužina Noža & Alergije
-          </span>
-          <p id="detailNotes" class="text-xs text-slate-200 leading-relaxed italic">
-            Nema posebnih napomena.
-          </p>
-        </div>
-
-        <!-- GROOMING HISTORY LIST -->
-        <div>
-          <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Istorija Šišanja & Tretmana</h4>
-          <div id="detailHistoryContainer" class="space-y-2 max-h-48 overflow-y-auto pr-1">
-            <!-- Rendered dynamically -->
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Drawer Footer -->
-      <div class="p-4 border-t border-slate-800 bg-slate-950 flex items-center justify-between">
-        <button onclick="deleteCurrentClient()" class="text-rose-400 hover:text-rose-300 text-xs font-semibold px-3 py-2 rounded-xl border border-rose-500/20 hover:bg-rose-500/10 transition">
-          🗑️ Izbriši Klijenta
-        </button>
-
-        <div class="flex items-center gap-2">
-          <button onclick="openEditModalForCurrent()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium px-4 py-2 rounded-xl border border-slate-700">
-            ✏️ Uredi Podatke
-          </button>
-          <button onclick="closeDetailModal()" class="bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold px-4 py-2 rounded-xl">
-            Zatvori
-          </button>
-        </div>
-      </div>
-
-    </div>
+  <!-- CLIENT DETAIL QUICK POPUP MODAL -->
+  <div id="detailModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div id="detailContent" class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-4 shadow-2xl"></div>
   </div>
 
-  <!-- MODAL: WHATSAPP REMINDER GENERATOR -->
-  <div id="reminderModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-5 space-y-4 shadow-2xl">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h3 class="font-bold text-white text-base flex items-center gap-2">
-          <span>💬</span> Pošalji Podsjetnik za Šišanje
-        </h3>
-        <button onclick="closeReminderModal()" class="text-slate-400 hover:text-white">✕</button>
-      </div>
-
-      <div>
-        <label class="block text-xs font-medium text-slate-300 mb-1">Tekst poruke:</label>
-        <textarea id="reminderText" rows="4" class="w-full bg-slate-950 text-xs text-slate-100 p-3 rounded-xl border border-slate-800 focus:outline-none focus:border-brand-500"></textarea>
-      </div>
-
-      <div class="grid grid-cols-2 gap-2">
-        <button onclick="sendReminderWhatsApp()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-1.5 shadow-lg">
-          💬 WhatsApp
-        </button>
-        <button onclick="sendReminderSMS()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-1.5 shadow-lg">
-          ✉️ SMS Poruka
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- TOAST NOTIFICATION CONTAINER -->
-  <div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2 pointer-events-none"></div>
-
-  <!-- CONFIRMATION MODAL -->
-  <div id="confirmModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-2xl text-center">
-      <div class="w-12 h-12 bg-rose-500/10 text-rose-400 rounded-full flex items-center justify-center mx-auto">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-        </svg>
-      </div>
-      <h3 id="confirmTitle" class="font-bold text-white text-base">Jeste li sigurni?</h3>
-      <p id="confirmMessage" class="text-xs text-slate-400">Ova radnja se ne može poništiti.</p>
-      <div class="flex items-center justify-center gap-2 pt-2">
-        <button onclick="closeConfirmModal(false)" class="px-4 py-2 text-xs font-medium text-slate-400 hover:text-white rounded-xl bg-slate-800">Otkaži</button>
-        <button id="confirmOkBtn" onclick="closeConfirmModal(true)" class="px-4 py-2 text-xs font-bold text-white rounded-xl bg-rose-600 hover:bg-rose-500 shadow-lg">Potvrdi</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- APPLICATION LOGIC JS -->
   <script>
-    // --- APP STATE & STORAGE ---
-    const STORAGE_KEY = 'grooming_crm_clients_db_v1';
-    let clients = [];
+    const STORAGE_KEY = 'grooming_crm_clients_v2';
+    const CLOUD_CFG_KEY = 'grooming_crm_firebase_cfg';
+    const CLOUD_ROOM_KEY = 'grooming_crm_room_id';
+
+    let clients = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
     let currentFilter = 'all';
-    let currentActiveClientId = null;
-    let tempCompressedPhotoBase64 = '';
-    let confirmResolver = null;
+    let currentPhotoBase64 = '';
+    let db = null;
+    let unsubscribeSnapshot = null;
+    let isCloudConnected = false;
 
-    // INITIALIZATION
-    window.onload = function() {
-      loadClientsFromStorage();
-      
-      // Check if URL has query parameter ?q=069123456 or ?q=Bobi
-      const urlParams = new URLSearchParams(window.location.search);
-      const query = urlParams.get('q') || urlParams.get('phone') || urlParams.get('search');
-      if (query) {
-        document.getElementById('searchInput').value = query;
-        handleSearch();
-      } else {
-        renderClients();
-      }
-
-      updateReminderBadge();
-    };
-
-    // --- STORAGE MANAGEMENT ---
-    function loadClientsFromStorage() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          clients = JSON.parse(raw);
-        } else {
-          clients = [];
-        }
-      } catch (e) {
-        console.error('Error loading storage', e);
-        clients = [];
-      }
-    }
-
-    function saveClientsToStorage() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
-        updateReminderBadge();
-      } catch (e) {
-        showToast('Greška pri čuvanju u memoriju telefona! Možda je slika prevelika.', 'error');
-      }
-    }
-
-    // --- DEMO DATA LOADER ---
-    function loadDemoData() {
-      const today = new Date();
-      const formatDaysAgo = (days) => {
-        const d = new Date();
-        d.setDate(today.getDate() - days);
-        return d.toISOString().split('T')[0];
-      };
-
-      const demoClients = [
-        {
-          id: 'demo-1',
-          firstName: 'Jelena',
-          lastName: 'Kovačević',
-          phone: '069111222',
-          whatsapp: '069111222',
-          viber: '069111222',
-          email: 'jelena.k@gmail.com',
-          instagram: '@jelena_k',
-          dogName: 'Milo',
-          dogBreed: 'Maltezer',
-          coatType: 'Svilenkasta bela dlaka',
-          lastGroomDate: formatDaysAgo(12),
-          notes: 'Standardno šišanje makazama na šapama. Nož 5mm po leđima. Miran pas.',
-          photo: '',
-          history: [
-            { date: formatDaysAgo(12), note: 'Komplet tretman šišanja i kupanja', price: '30€' },
-            { date: formatDaysAgo(52), note: 'Higijenski tretman i skraćivanje noktiju', price: '15€' }
-          ]
-        },
-        {
-          id: 'demo-2',
-          firstName: 'Nikola',
-          lastName: 'Ivanović',
-          phone: '067333444',
-          whatsapp: '067333444',
-          viber: '067333444',
-          email: 'nikola.iv@yahoo.com',
-          instagram: '',
-          dogName: 'Astor',
-          dogBreed: 'Zlatni Retriver',
-          coatType: 'Gusta poddlaka, veliko linjanje',
-          lastGroomDate: formatDaysAgo(48),
-          notes: 'Furminiranje poddlake, kupanje i izduvavanje fenom. Paziti na uši!',
-          photo: '',
-          history: [
-            { date: formatDaysAgo(48), note: 'Deshedding tretman odlinjavanja', price: '40€' }
-          ]
-        },
-        {
-          id: 'demo-3',
-          firstName: 'Milica',
-          lastName: 'Popović',
-          phone: '068555666',
-          whatsapp: '068555666',
-          viber: '068555666',
-          email: 'milica.p@hotmail.com',
-          instagram: '@milica_p',
-          dogName: 'Bella',
-          dogBreed: 'Patuljasta Pudla',
-          coatType: 'Kovrdžava crna dlaka',
-          lastGroomDate: formatDaysAgo(68),
-          notes: 'Azijska frizura (Teddy Bear look). Osetljive uši, ne voli četkanje repa.',
-          photo: '',
-          history: [
-            { date: formatDaysAgo(68), note: 'Full Grooming Azijski stil', price: '35€' }
-          ]
-        }
-      ];
-
-      // Merge demo clients avoiding exact duplicate IDs
-      demoClients.forEach(dc => {
-        if (!clients.some(c => c.phone === dc.phone)) {
-          clients.push(dc);
-        }
-      });
-
-      saveClientsToStorage();
+    // --- INIT ---
+    window.addEventListener('DOMContentLoaded', () => {
       renderClients();
-      showToast('Demo klijenti su uspešno učitani!', 'success');
-      switchTab('clients');
+      initCloudFromStorage();
+
+      // Check URL ?q= parameter for quick lookup
+      const params = new URLSearchParams(window.location.search);
+      const q = params.get('q');
+      if (q) {
+        document.getElementById('searchInput').value = q;
+        renderClients();
+        const matches = filterClientsList(q);
+        if (matches.length === 1) {
+          openDetailModal(matches[0].id);
+        }
+      }
+    });
+
+    // --- NAVIGATION ---
+    function switchTab(tabName) {
+      ['clients', 'reminders', 'cloud', 'io', 'guide'].forEach(t => {
+        document.getElementById('tab-' + t).classList.add('hidden');
+        const btn = document.getElementById('nav-' + t);
+        btn.classList.remove('text-brand-400');
+        btn.classList.add('text-slate-400');
+      });
+      document.getElementById('tab-' + tabName).classList.remove('hidden');
+      const activeBtn = document.getElementById('nav-' + tabName);
+      activeBtn.classList.remove('text-slate-400');
+      activeBtn.classList.add('text-brand-400');
+
+      if (tabName === 'reminders') renderReminders();
     }
 
-    // --- RENDER CLIENTS ---
-    function calculateDaysAgo(dateStr) {
-      if (!dateStr) return 999;
-      const last = new Date(dateStr);
-      const now = new Date();
-      const diffTime = Math.abs(now - last);
-      return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    // --- CLOUD SYNC (FIREBASE FIRESTORE) ---
+    function parseFirebaseConfig(raw) {
+      let cleaned = raw.trim();
+      cleaned = cleaned.replace(/^const\s+\w+\s*=\s*/, '').replace(/;$/, '').trim();
+      try {
+        return JSON.parse(cleaned);
+      } catch (e) {
+        // Convert JS object literal keys to valid JSON
+        const jsonified = cleaned
+          .replace(/(['"])?([a-zA-Z0-9_]+)(['"])?\s*:/g, '"$2":')
+          .replace(/'/g, '"')
+          .replace(/,\s*}/g, '}');
+        return JSON.parse(jsonified);
+      }
     }
 
-    function getGroomingBadgeInfo(days) {
-      if (days > 900) return { label: 'Nije šišan', color: 'bg-slate-800 text-slate-400 border-slate-700' };
-      if (days <= 30) return { label: `Šišan prije ${days} d.`, color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' };
-      if (days <= 55) return { label: `Prije ${days} d. (Uskoro)`, color: 'bg-amber-500/20 text-amber-400 border-amber-500/30' };
-      return { label: `Kasni ${days} dana!`, color: 'bg-rose-500/20 text-rose-400 border-rose-500/30 font-bold' };
+    function updateSyncUI(connected, roomId = '', errorMsg = '') {
+      isCloudConnected = connected;
+      const badge = document.getElementById('syncBadge');
+      const panelStatus = document.getElementById('cloudPanelStatus');
+
+      if (connected) {
+        badge.className = 'text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-950/90 text-emerald-300 border border-emerald-700/70 transition flex items-center gap-1';
+        badge.innerHTML = `<span>Sinhronizovano ☁️</span>`;
+        panelStatus.className = 'text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-700 shrink-0';
+        panelStatus.textContent = `Aktivno (${roomId})`;
+      } else {
+        badge.className = 'text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 hover:border-slate-500 transition flex items-center gap-1';
+        badge.innerHTML = `<span>${errorMsg ? 'Greška ⚠️' : 'Lokalno 💾'}</span>`;
+        panelStatus.className = 'text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-900 text-slate-400 border border-slate-700 shrink-0';
+        panelStatus.textContent = errorMsg || 'Nije povezano';
+      }
     }
 
-    function renderClients() {
-      const container = document.getElementById('clientsContainer');
-      const emptyState = document.getElementById('emptyState');
-      const searchVal = document.getElementById('searchInput').value.toLowerCase().trim();
+    function showCloudFeedback(msg, isError = false) {
+      const el = document.getElementById('cloudFeedback');
+      el.textContent = msg;
+      el.className = `text-xs mt-2 ${isError ? 'text-rose-400' : 'text-emerald-400'}`;
+      el.classList.remove('hidden');
+    }
 
-      let filtered = clients.filter(c => {
-        const days = calculateDaysAgo(c.lastGroomDate);
+    function initCloudFromStorage() {
+      const savedCfg = localStorage.getItem(CLOUD_CFG_KEY);
+      const savedRoom = localStorage.getItem(CLOUD_ROOM_KEY);
+      if (savedCfg) document.getElementById('cloudFirebaseConfig').value = savedCfg;
+      if (savedRoom) document.getElementById('cloudRoomId').value = savedRoom;
 
-        // Filter chips logic
-        if (currentFilter === 'recent' && days > 30) return false;
-        if (currentFilter === 'due' && (days <= 30 || days > 60)) return false;
-        if (currentFilter === 'overdue' && days <= 60) return false;
+      if (savedCfg && savedRoom) {
+        connectToFirestore(savedCfg, savedRoom, false);
+      }
+    }
 
-        // Search text matching
-        if (searchVal) {
-          const matchOwner = (c.firstName + ' ' + c.lastName).toLowerCase().includes(searchVal);
-          const matchDog = (c.dogName || '').toLowerCase().includes(searchVal);
-          const matchBreed = (c.dogBreed || '').toLowerCase().includes(searchVal);
-          const matchPhone = (c.phone || '').includes(searchVal);
-          return matchOwner || matchDog || matchBreed || matchPhone;
+    function saveAndConnectCloud() {
+      const rawCfg = document.getElementById('cloudFirebaseConfig').value.trim();
+      const roomId = document.getElementById('cloudRoomId').value.trim();
+
+      if (!roomId || !rawCfg) {
+        showCloudFeedback('Unesite i Room ID i Firebase Config objekat.', true);
+        return;
+      }
+
+      try {
+        parseFirebaseConfig(rawCfg);
+      } catch (e) {
+        showCloudFeedback('Neispravan format Firebase Config-a. Provjerite zagrade { ... }.', true);
+        return;
+      }
+
+      localStorage.setItem(CLOUD_CFG_KEY, rawCfg);
+      localStorage.setItem(CLOUD_ROOM_KEY, roomId);
+      connectToFirestore(rawCfg, roomId, true);
+    }
+
+    function connectToFirestore(rawCfg, roomId, showMsg) {
+      try {
+        const config = parseFirebaseConfig(rawCfg);
+        if (unsubscribeSnapshot) {
+          unsubscribeSnapshot();
+          unsubscribeSnapshot = null;
         }
 
-        return true;
+        const appName = 'grooming-' + roomId;
+        let app;
+        const existing = firebase.apps.find(a => a.name === appName);
+        app = existing ? existing : firebase.initializeApp(config, appName);
+        db = firebase.firestore(app);
+
+        const colRef = db.collection('rooms').doc(roomId).collection('clients');
+
+        unsubscribeSnapshot = colRef.onSnapshot((snapshot) => {
+          updateSyncUI(true, roomId);
+          if (!snapshot.empty) {
+            const cloudClients = [];
+            snapshot.forEach(doc => cloudClients.push(doc.data()));
+            clients = cloudClients;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+            renderClients();
+          }
+          if (showMsg) showCloudFeedback('Povezano sa Firebase Firestore bazom!');
+        }, (err) => {
+          console.error('Firestore error:', err);
+          updateSyncUI(false, '', 'Greška dozvola');
+          showCloudFeedback('Greška pri povezivanju: ' + err.message + ' (Provjerite Firestore Rules)', true);
+        });
+      } catch (err) {
+        updateSyncUI(false, '', 'Greška');
+        showCloudFeedback('Greška: ' + err.message, true);
+      }
+    }
+
+    async function pushLocalToCloud() {
+      if (!db || !isCloudConnected) {
+        showCloudFeedback('Prvo kliknite "Sačuvaj i poveži Cloud".', true);
+        return;
+      }
+      const roomId = localStorage.getItem(CLOUD_ROOM_KEY);
+      const colRef = db.collection('rooms').doc(roomId).collection('clients');
+      try {
+        for (const c of clients) {
+          await colRef.doc(c.id).set(c);
+        }
+        showCloudFeedback(`Uspješno prebačeno ${clients.length} klijenata u oblak!`);
+      } catch (e) {
+        showCloudFeedback('Greška pri slanju u oblak: ' + e.message, true);
+      }
+    }
+
+    async function pullFromCloudManual() {
+      if (!db) {
+        showCloudFeedback('Prvo kliknite "Sačuvaj i poveži Cloud".', true);
+        return;
+      }
+      const roomId = localStorage.getItem(CLOUD_ROOM_KEY);
+      try {
+        const snap = await db.collection('rooms').doc(roomId).collection('clients').get();
+        const cloudClients = [];
+        snap.forEach(doc => cloudClients.push(doc.data()));
+        clients = cloudClients;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+        renderClients();
+        showCloudFeedback(`Preuzeto ${clients.length} klijenata iz oblaka.`);
+      } catch (e) {
+        showCloudFeedback('Greška pri preuzimanju: ' + e.message, true);
+      }
+    }
+
+    function disconnectCloud() {
+      if (unsubscribeSnapshot) unsubscribeSnapshot();
+      localStorage.removeItem(CLOUD_CFG_KEY);
+      localStorage.removeItem(CLOUD_ROOM_KEY);
+      db = null;
+      updateSyncUI(false);
+      showCloudFeedback('Cloud sinhronizacija je isključena.');
+    }
+
+    async function syncClientToCloud(client) {
+      if (!db || !isCloudConnected) return;
+      const roomId = localStorage.getItem(CLOUD_ROOM_KEY);
+      try {
+        await db.collection('rooms').doc(roomId).collection('clients').doc(client.id).set(client);
+      } catch (e) {
+        console.error('Sync save failed:', e);
+      }
+    }
+
+    async function deleteClientFromCloud(clientId) {
+      if (!db || !isCloudConnected) return;
+      const roomId = localStorage.getItem(CLOUD_ROOM_KEY);
+      try {
+        await db.collection('rooms').doc(roomId).collection('clients').doc(clientId).delete();
+      } catch (e) {
+        console.error('Sync delete failed:', e);
+      }
+    }
+
+    // --- HELPERS & STATUS ---
+    function daysSince(dateStr) {
+      if (!dateStr) return null;
+      const diff = Date.now() - new Date(dateStr).getTime();
+      return Math.floor(diff / (1000 * 60 * 60 * 24));
+    }
+
+    function getStatusBadge(dateStr) {
+      const days = daysSince(dateStr);
+      if (days === null) return { text: 'Nikad šišan', cls: 'bg-slate-800 text-slate-400 border-slate-700', category: 'overdue' };
+      if (days <= 35) return { text: `Prije ${days}d`, cls: 'bg-emerald-950/80 text-emerald-300 border-emerald-800/70', category: 'recent' };
+      if (days <= 60) return { text: `Prije ${days}d (Zreo)`, cls: 'bg-amber-950/80 text-amber-300 border-amber-800/70', category: 'due' };
+      return { text: `Prije ${days}d (Kasni)`, cls: 'bg-rose-950/80 text-rose-300 border-rose-800/70', category: 'overdue' };
+    }
+
+    function cleanPhone(num) {
+      return (num || '').replace(/[^0-9+]/g, '');
+    }
+
+    // --- RENDERING ---
+    function setFilter(f) {
+      currentFilter = f;
+      document.querySelectorAll('.filter-pill').forEach(btn => {
+        btn.classList.remove('bg-brand-600', 'text-white');
+        btn.classList.add('bg-slate-800', 'text-slate-300');
       });
-
-      // Update counters
-      document.getElementById('count-all').innerText = clients.length;
-      document.getElementById('count-recent').innerText = clients.filter(c => calculateDaysAgo(c.lastGroomDate) <= 30).length;
-      document.getElementById('count-due').innerText = clients.filter(c => {
-        const d = calculateDaysAgo(c.lastGroomDate);
-        return d > 30 && d <= 60;
-      }).length;
-      document.getElementById('count-overdue').innerText = clients.filter(c => calculateDaysAgo(c.lastGroomDate) > 60).length;
-      document.getElementById('displayedCount').innerText = filtered.length;
-
-      if (filtered.length === 0) {
-        container.innerHTML = '';
-        emptyState.classList.remove('hidden');
-        return;
-      }
-
-      emptyState.classList.add('hidden');
-
-      container.innerHTML = filtered.map(c => {
-        const days = calculateDaysAgo(c.lastGroomDate);
-        const badge = getGroomingBadgeInfo(days);
-        const photoHtml = c.photo 
-          ? `<img src="${c.photo}" class="w-full h-full object-cover">`
-          : `<span class="text-xl">🐶</span>`;
-
-        const formattedPhone = c.phone || 'Nema tel.';
-
-        return `
-          <div onclick="openDetailModal('${c.id}')" class="glass-card rounded-2xl p-4 hover:border-brand-500/50 transition cursor-pointer flex items-center justify-between gap-3 group">
-            <div class="flex items-center gap-3.5 min-w-0">
-              <div class="w-14 h-14 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center shrink-0 overflow-hidden shadow-inner group-hover:scale-105 transition">
-                ${photoHtml}
-              </div>
-              <div class="min-w-0 flex-1">
-                <div class="flex items-center gap-2">
-                  <h3 class="font-bold text-slate-100 text-sm truncate">${escapeHtml(c.dogName || 'Bez imena')}</h3>
-                  <span class="text-[10px] px-2 py-0.5 rounded-full border ${badge.color}">${badge.label}</span>
-                </div>
-                <p class="text-xs text-brand-300 font-medium truncate">${escapeHtml(c.dogBreed || 'Rasa nepoznata')}</p>
-                <div class="text-[11px] text-slate-400 mt-1 flex items-center gap-2 truncate">
-                  <span>👤 ${escapeHtml(c.firstName + ' ' + (c.lastName || ''))}</span>
-                  <span>•</span>
-                  <span>📞 ${escapeHtml(formattedPhone)}</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="text-slate-500 group-hover:text-brand-400 transition shrink-0 pl-1">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      renderRemindersTab();
-    }
-
-    // --- REMINDERS TAB RENDER ---
-    function renderRemindersTab() {
-      const container = document.getElementById('remindersContainer');
-      const overdueClients = clients.filter(c => calculateDaysAgo(c.lastGroomDate) > 35);
-
-      if (overdueClients.length === 0) {
-        container.innerHTML = `
-          <div class="glass-card p-8 rounded-2xl text-center text-slate-400 text-xs">
-            🎉 Bravo! Svi klijenti su redovno šišani u zadnjih 35 dni.
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = overdueClients.map(c => {
-        const days = calculateDaysAgo(c.lastGroomDate);
-        return `
-          <div class="glass-card rounded-2xl p-4 flex items-center justify-between flex-wrap gap-3">
-            <div class="flex items-center gap-3">
-              <div class="w-12 h-12 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center text-xl overflow-hidden shrink-0">
-                ${c.photo ? `<img src="${c.photo}" class="w-full h-full object-cover">` : '🐶'}
-              </div>
-              <div>
-                <h4 class="font-bold text-white text-sm">${escapeHtml(c.dogName)} <span class="text-xs font-normal text-slate-400">(${escapeHtml(c.dogBreed)})</span></h4>
-                <p class="text-xs text-slate-400">Vlasnik: ${escapeHtml(c.firstName)} ${escapeHtml(c.lastName || '')} • <strong class="text-rose-400">Prošlo ${days} d.</strong></p>
-              </div>
-            </div>
-
-            <button onclick="openReminderModal('${c.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-md transition active:scale-95">
-              <span>💬</span> Pošalji Podsjetnik
-            </button>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function updateReminderBadge() {
-      const count = clients.filter(c => calculateDaysAgo(c.lastGroomDate) > 35).length;
-      const badge = document.getElementById('nav-reminder-badge');
-      if (count > 0) {
-        badge.innerText = count;
-        badge.classList.remove('hidden');
-      } else {
-        badge.classList.add('hidden');
-      }
-    }
-
-    // --- SEARCH HANDLER ---
-    function handleSearch() {
-      const val = document.getElementById('searchInput').value;
-      const clearBtn = document.getElementById('clearSearchBtn');
-      if (val) {
-        clearBtn.classList.remove('hidden');
-      } else {
-        clearBtn.classList.add('hidden');
-      }
+      const active = document.getElementById('filter-' + f);
+      active.classList.remove('bg-slate-800', 'text-slate-300');
+      active.classList.add('bg-brand-600', 'text-white');
       renderClients();
     }
 
     function clearSearch() {
       document.getElementById('searchInput').value = '';
-      document.getElementById('clearSearchBtn').classList.add('hidden');
       renderClients();
     }
 
-    function setFilter(filter) {
-      currentFilter = filter;
-      document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('active', 'bg-slate-800', 'text-white');
-        btn.classList.add('bg-slate-900', 'text-slate-400');
+    function filterClientsList(query) {
+      const q = (query || '').toLowerCase().trim();
+      return clients.filter(c => {
+        const badge = getStatusBadge(c.lastGroomed);
+        if (currentFilter !== 'all' && badge.category !== currentFilter) return false;
+        if (!q) return true;
+        const hay = `${c.firstName} ${c.lastName} ${c.dogName} ${c.dogBreed} ${c.phone} ${c.notes}`.toLowerCase();
+        return hay.includes(q);
       });
-      const activeBtn = document.getElementById(`filter-${filter}`);
-      if (activeBtn) {
-        activeBtn.classList.add('active', 'bg-slate-800', 'text-white');
-        activeBtn.classList.remove('bg-slate-900', 'text-slate-400');
+    }
+
+    function renderClients() {
+      const q = document.getElementById('searchInput').value;
+      document.getElementById('clearSearchBtn').classList.toggle('hidden', !q);
+
+      // Update counts
+      let recent = 0, due = 0, overdue = 0;
+      clients.forEach(c => {
+        const cat = getStatusBadge(c.lastGroomed).category;
+        if (cat === 'recent') recent++;
+        else if (cat === 'due') due++;
+        else overdue++;
+      });
+      document.getElementById('count-all').textContent = clients.length;
+      document.getElementById('count-recent').textContent = recent;
+      document.getElementById('count-due').textContent = due;
+      document.getElementById('count-overdue').textContent = overdue;
+
+      const filtered = filterClientsList(q);
+      document.getElementById('shownCount').textContent = filtered.length;
+
+      const listEl = document.getElementById('clientsList');
+      const emptyEl = document.getElementById('emptyState');
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = '';
+        emptyEl.classList.remove('hidden');
+        return;
       }
-      renderClients();
+
+      emptyEl.classList.add('hidden');
+      listEl.innerHTML = filtered.map(c => {
+        const badge = getStatusBadge(c.lastGroomed);
+        const waNum = cleanPhone(c.whatsapp || c.phone).replace(/^\+/, '');
+        const telNum = cleanPhone(c.phone);
+
+        return `
+          <div onclick="openDetailModal('${c.id}')" class="cursor-pointer bg-slate-800/60 hover:bg-slate-800 border border-slate-700/70 rounded-2xl p-3.5 transition flex flex-col justify-between gap-3">
+            <div class="flex items-start gap-3">
+              <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center text-xl overflow-hidden shrink-0">
+                ${c.photo ? `<img src="${c.photo}" class="w-full h-full object-cover">` : '🐶'}
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center justify-between gap-2">
+                  <h3 class="text-sm font-bold text-white truncate">${c.dogName} <span class="font-normal text-slate-400 text-xs">(${c.dogBreed || 'Mješanac'})</span></h3>
+                  <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border shrink-0 ${badge.cls}">${badge.text}</span>
+                </div>
+                <p class="text-xs text-slate-300 truncate mt-0.5">👤 ${c.firstName} ${c.lastName || ''}</p>
+                <p class="text-[11px] text-slate-400 truncate mt-0.5">📞 ${c.phone}</p>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-1.5 pt-2 border-t border-slate-700/50" onclick="event.stopPropagation()">
+              <div class="flex items-center gap-1.5">
+                <a href="tel:${telNum}" class="bg-slate-700/80 hover:bg-slate-600 text-white text-xs px-2.5 py-1.5 rounded-lg transition" title="Pozovi">📞</a>
+                <a href="https://wa.me/${waNum}" target="_blank" class="bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 text-xs px-2.5 py-1.5 rounded-lg transition" title="WhatsApp">💬 WA</a>
+                <a href="viber://chat?number=%2B${waNum}" class="bg-purple-900/60 hover:bg-purple-800 text-purple-200 text-xs px-2.5 py-1.5 rounded-lg transition" title="Viber">💜</a>
+              </div>
+              <button onclick="groomToday('${c.id}')" class="bg-brand-600/20 hover:bg-brand-600 text-brand-300 hover:text-white border border-brand-500/40 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg transition">
+                ✂️ Šišan danas
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
-    // --- TAB NAVIGATION ---
-    function switchTab(tabId) {
-      ['clients', 'reminders', 'import', 'ios'].forEach(id => {
-        const sec = document.getElementById(`tab-${id}`);
-        const nav = document.getElementById(`nav-${id}`);
-        if (id === tabId) {
-          sec.classList.remove('hidden');
-          nav.classList.add('text-brand-400');
-          nav.classList.remove('text-slate-400');
-        } else {
-          sec.classList.add('hidden');
-          nav.classList.remove('text-brand-400');
-          nav.classList.add('text-slate-400');
-        }
+    function renderReminders() {
+      const dueClients = clients.filter(c => {
+        const d = daysSince(c.lastGroomed);
+        return d === null || d >= 35;
       });
+      const el = document.getElementById('remindersList');
+      if (dueClients.length === 0) {
+        el.innerHTML = `<div class="bg-slate-800/40 border border-slate-800 rounded-2xl p-6 text-center text-xs text-slate-400">Svi psi su nedavno šišani! 🎉</div>`;
+        return;
+      }
+      el.innerHTML = dueClients.map(c => {
+        const waNum = cleanPhone(c.whatsapp || c.phone).replace(/^\+/, '');
+        const msg = encodeURIComponent(`Zdravo ${c.firstName}! 🐾 Prošlo je neko vrijeme od zadnjeg šišanja za ${c.dogName}. Da li želite da zakažemo novi termin za gruming?`);
+        return `
+          <div class="bg-slate-800/60 border border-slate-700/70 rounded-2xl p-4 flex items-center justify-between gap-3">
+            <div>
+              <h4 class="text-sm font-bold text-white">${c.dogName} <span class="text-xs font-normal text-slate-400">(${c.firstName} ${c.lastName || ''})</span></h4>
+              <p class="text-xs text-slate-400 mt-0.5">Zadnje šišanje: ${c.lastGroomed || 'Nepoznato'}</p>
+            </div>
+            <a href="https://wa.me/${waNum}?text=${msg}" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition shrink-0">
+              Pošalji WA podsjetnik
+            </a>
+          </div>
+        `;
+      }).join('');
     }
 
-    // --- CLIENT MODAL & FORM ---
-    function openClientModal(idToEdit = null) {
+    // --- CRUD OPERATIONS ---
+    function openClientModal(client = null) {
       document.getElementById('clientForm').reset();
-      tempCompressedPhotoBase64 = '';
-      document.getElementById('photoPreview').innerHTML = `
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-      `;
+      currentPhotoBase64 = client?.photo || '';
+      document.getElementById('photoPreview').innerHTML = currentPhotoBase64
+        ? `<img src="${currentPhotoBase64}" class="w-full h-full object-cover">`
+        : '🐶';
 
-      if (idToEdit) {
-        const c = clients.find(item => item.id === idToEdit);
-        if (c) {
-          document.getElementById('modalTitle').innerText = 'Uredi Klijenta';
-          document.getElementById('clientId').value = c.id;
-          document.getElementById('firstName').value = c.firstName || '';
-          document.getElementById('lastName').value = c.lastName || '';
-          document.getElementById('phone').value = c.phone || '';
-          document.getElementById('whatsapp').value = c.whatsapp || '';
-          document.getElementById('viber').value = c.viber || '';
-          document.getElementById('email').value = c.email || '';
-          document.getElementById('instagram').value = c.instagram || '';
-          document.getElementById('dogName').value = c.dogName || '';
-          document.getElementById('dogBreed').value = c.dogBreed || '';
-          document.getElementById('coatType').value = c.coatType || '';
-          document.getElementById('lastGroomDate').value = c.lastGroomDate || '';
-          document.getElementById('notes').value = c.notes || '';
-          if (c.photo) {
-            tempCompressedPhotoBase64 = c.photo;
-            document.getElementById('photoPreview').innerHTML = `<img src="${c.photo}" class="w-full h-full object-cover">`;
-          }
-        }
+      if (client) {
+        document.getElementById('modalTitle').textContent = 'Uredi klijenta';
+        document.getElementById('clientId').value = client.id;
+        document.getElementById('firstName').value = client.firstName || '';
+        document.getElementById('lastName').value = client.lastName || '';
+        document.getElementById('phone').value = client.phone || '';
+        document.getElementById('email').value = client.email || '';
+        document.getElementById('whatsapp').value = client.whatsapp || '';
+        document.getElementById('viber').value = client.viber || '';
+        document.getElementById('instagram').value = client.instagram || '';
+        document.getElementById('dogName').value = client.dogName || '';
+        document.getElementById('dogBreed').value = client.dogBreed || '';
+        document.getElementById('dogType').value = client.dogType || '';
+        document.getElementById('lastGroomed').value = client.lastGroomed || '';
+        document.getElementById('notes').value = client.notes || '';
+        document.getElementById('deleteBtn').classList.remove('hidden');
       } else {
-        document.getElementById('modalTitle').innerText = 'Novi Klijent & Pas';
+        document.getElementById('modalTitle').textContent = 'Novi klijent';
         document.getElementById('clientId').value = '';
-        // Default today's date
-        document.getElementById('lastGroomDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('lastGroomed').value = new Date().toISOString().split('T')[0];
+        document.getElementById('deleteBtn').classList.add('hidden');
       }
 
       document.getElementById('clientModal').classList.remove('hidden');
@@ -1009,512 +727,241 @@
       document.getElementById('clientModal').classList.add('hidden');
     }
 
-    function saveClient(e) {
+    async function saveClient(e) {
       e.preventDefault();
-      const id = document.getElementById('clientId').value;
-      const firstName = document.getElementById('firstName').value.trim();
-      const lastName = document.getElementById('lastName').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      const whatsapp = document.getElementById('whatsapp').value.trim() || phone;
-      const viber = document.getElementById('viber').value.trim() || phone;
-      const email = document.getElementById('email').value.trim();
-      const instagram = document.getElementById('instagram').value.trim();
-      const dogName = document.getElementById('dogName').value.trim();
-      const dogBreed = document.getElementById('dogBreed').value.trim();
-      const coatType = document.getElementById('coatType').value.trim();
-      const lastGroomDate = document.getElementById('lastGroomDate').value;
-      const notes = document.getElementById('notes').value.trim();
+      const id = document.getElementById('clientId').value || ('c_' + Date.now());
+      const clientObj = {
+        id,
+        firstName: document.getElementById('firstName').value.trim(),
+        lastName: document.getElementById('lastName').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        whatsapp: document.getElementById('whatsapp').value.trim(),
+        viber: document.getElementById('viber').value.trim(),
+        instagram: document.getElementById('instagram').value.trim(),
+        dogName: document.getElementById('dogName').value.trim(),
+        dogBreed: document.getElementById('dogBreed').value.trim(),
+        dogType: document.getElementById('dogType').value.trim(),
+        lastGroomed: document.getElementById('lastGroomed').value,
+        notes: document.getElementById('notes').value.trim(),
+        photo: currentPhotoBase64,
+        updatedAt: Date.now()
+      };
 
-      if (id) {
-        // Edit existing
-        const index = clients.findIndex(c => c.id === id);
-        if (index !== -1) {
-          clients[index] = {
-            ...clients[index],
-            firstName, lastName, phone, whatsapp, viber, email, instagram,
-            dogName, dogBreed, coatType, lastGroomDate, notes,
-            photo: tempCompressedPhotoBase64 || clients[index].photo
-          };
-        }
-      } else {
-        // Create new
-        const newClient = {
-          id: 'client-' + Date.now(),
-          firstName, lastName, phone, whatsapp, viber, email, instagram,
-          dogName, dogBreed, coatType, lastGroomDate, notes,
-          photo: tempCompressedPhotoBase64,
-          history: lastGroomDate ? [{ date: lastGroomDate, note: 'Inicijalno šišanje' }] : []
-        };
-        clients.unshift(newClient);
-      }
+      const idx = clients.findIndex(c => c.id === id);
+      if (idx >= 0) clients[idx] = clientObj;
+      else clients.unshift(clientObj);
 
-      saveClientsToStorage();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
       closeClientModal();
       renderClients();
-      showToast('Klijent je uspešno sačuvan!', 'success');
+      await syncClientToCloud(clientObj);
     }
 
-    // CLIENT-SIDE PHOTO COMPRESSION CANVAS
-    function previewAndCompressPhoto(e) {
-      const file = e.target.files[0];
+    async function deleteCurrentClient() {
+      const id = document.getElementById('clientId').value;
+      if (!id || !confirm('Obrisati ovog klijenta?')) return;
+      clients = clients.filter(c => c.id !== id);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+      closeClientModal();
+      renderClients();
+      await deleteClientFromCloud(id);
+    }
+
+    async function groomToday(id) {
+      const c = clients.find(x => x.id === id);
+      if (!c) return;
+      c.lastGroomed = new Date().toISOString().split('T')[0];
+      c.updatedAt = Date.now();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+      renderClients();
+      await syncClientToCloud(c);
+    }
+
+    function openDetailModal(id) {
+      const c = clients.find(x => x.id === id);
+      if (!c) return;
+      const badge = getStatusBadge(c.lastGroomed);
+      const waNum = cleanPhone(c.whatsapp || c.phone).replace(/^\+/, '');
+      const igHandle = (c.instagram || '').replace(/^@/, '');
+
+      document.getElementById('detailContent').innerHTML = `
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-14 h-14 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-2xl overflow-hidden">
+              ${c.photo ? `<img src="${c.photo}" class="w-full h-full object-cover">` : '🐶'}
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-white">${c.dogName}</h3>
+              <p class="text-xs text-slate-400">${c.dogBreed || 'Rasa nije unijeta'} ${c.dogType ? '• ' + c.dogType : ''}</p>
+            </div>
+          </div>
+          <button onclick="document.getElementById('detailModal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">✕</button>
+        </div>
+
+        <div class="bg-slate-800/60 rounded-2xl p-3.5 space-y-2 text-xs">
+          <div class="flex justify-between"><span class="text-slate-400">Vlasnik:</span> <span class="font-semibold text-white">${c.firstName} ${c.lastName || ''}</span></div>
+          <div class="flex justify-between"><span class="text-slate-400">Telefon:</span> <span class="text-white">${c.phone}</span></div>
+          ${c.email ? `<div class="flex justify-between"><span class="text-slate-400">Email:</span> <span class="text-white">${c.email}</span></div>` : ''}
+          <div class="flex justify-between items-center"><span class="text-slate-400">Zadnje šišanje:</span> <span class="px-2 py-0.5 rounded-full border text-[11px] ${badge.cls}">${c.lastGroomed || 'Nikad'} (${badge.text})</span></div>
+          ${c.notes ? `<div class="pt-2 border-t border-slate-700/60 text-slate-300"><span class="text-slate-400 block mb-0.5">Napomene:</span>${c.notes}</div>` : ''}
+        </div>
+
+        <div class="grid grid-cols-4 gap-2 text-center text-xs">
+          <a href="tel:${cleanPhone(c.phone)}" class="bg-slate-800 hover:bg-slate-700 py-2.5 rounded-xl font-medium">📞 Poziv</a>
+          <a href="https://wa.me/${waNum}" target="_blank" class="bg-emerald-950 hover:bg-emerald-900 text-emerald-300 py-2.5 rounded-xl font-medium">💬 WhatsApp</a>
+          <a href="viber://chat?number=%2B${waNum}" class="bg-purple-950 hover:bg-purple-900 text-purple-300 py-2.5 rounded-xl font-medium">💜 Viber</a>
+          ${igHandle ? `<a href="https://instagram.com/${igHandle}" target="_blank" class="bg-pink-950 hover:bg-pink-900 text-pink-300 py-2.5 rounded-xl font-medium">📸 IG</a>` : `<span class="bg-slate-800/40 text-slate-600 py-2.5 rounded-xl">📸 IG</span>`}
+        </div>
+
+        <div class="flex gap-2 pt-1">
+          <button onclick="groomToday('${c.id}'); document.getElementById('detailModal').classList.add('hidden')" class="flex-1 bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold py-2.5 rounded-xl transition">✂️ Zabilježi današnje šišanje</button>
+          <button onclick="document.getElementById('detailModal').classList.add('hidden'); openClientModal(clients.find(x=>x.id==='${c.id}'))" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition">Uredi</button>
+        </div>
+      `;
+      document.getElementById('detailModal').classList.remove('hidden');
+    }
+
+    // --- IMAGE COMPRESSION ---
+    function handlePhotoUpload(event) {
+      const file = event.target.files[0];
       if (!file) return;
-
       const reader = new FileReader();
-      reader.onload = function(event) {
+      reader.onload = (e) => {
         const img = new Image();
-        img.onload = function() {
+        img.onload = () => {
           const canvas = document.createElement('canvas');
-          const maxDim = 400; // max width/height for fast mobile storage
-          let width = img.width;
-          let height = img.height;
-
-          if (width > height) {
-            if (width > maxDim) {
-              height *= maxDim / width;
-              width = maxDim;
-            }
-          } else {
-            if (height > maxDim) {
-              width *= maxDim / height;
-              height = maxDim;
-            }
-          }
-
-          canvas.width = width;
-          canvas.height = height;
+          const MAX = 300;
+          const scale = Math.min(MAX / img.width, MAX / img.height, 1);
+          canvas.width = img.width * scale;
+          canvas.height = img.height * scale;
           const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-          
-          tempCompressedPhotoBase64 = canvas.toDataURL('image/jpeg', 0.7);
-          document.getElementById('photoPreview').innerHTML = `<img src="${tempCompressedPhotoBase64}" class="w-full h-full object-cover">`;
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.7);
+          document.getElementById('photoPreview').innerHTML = `<img src="${currentPhotoBase64}" class="w-full h-full object-cover">`;
         };
-        img.src = event.target.result;
+        img.src = e.target.result;
       };
       reader.readAsDataURL(file);
     }
 
-    // --- DETAIL MODAL (KARTON KLIJENTA) ---
-    function openDetailModal(id) {
-      const c = clients.find(item => item.id === id);
-      if (!c) return;
-
-      currentActiveClientId = id;
-
-      document.getElementById('detailDogName').innerText = c.dogName || 'Pas';
-      document.getElementById('detailDogBreed').innerText = `${c.dogBreed || ''} ${c.coatType ? '• ' + c.coatType : ''}`;
-      document.getElementById('detailOwnerName').innerText = `${c.firstName} ${c.lastName || ''}`;
-      
-      const days = calculateDaysAgo(c.lastGroomDate);
-      const badge = getGroomingBadgeInfo(days);
-      const badgeEl = document.getElementById('detailBadge');
-      badgeEl.innerText = badge.label;
-      badgeEl.className = `px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${badge.color}`;
-
-      document.getElementById('detailLastDateText').innerText = c.lastGroomDate 
-        ? `Zadnji put: ${formatDateDisplay(c.lastGroomDate)} (${days} d. prekoračenja)` 
-        : 'Datum nije unet';
-
-      // Photo
-      const photoEl = document.getElementById('detailDogPhoto');
-      if (c.photo) {
-        photoEl.innerHTML = `<img src="${c.photo}" class="w-full h-full object-cover">`;
-      } else {
-        photoEl.innerHTML = `🐶`;
-      }
-
-      // Quick links
-      const cleanPhone = (c.phone || '').replace(/\s+/g, '');
-      const cleanWA = (c.whatsapp || c.phone || '').replace(/\s+/g, '');
-      const cleanViber = (c.viber || c.phone || '').replace(/\s+/g, '');
-
-      document.getElementById('btnCall').href = `tel:${cleanPhone}`;
-      document.getElementById('btnSMS').href = `sms:${cleanPhone}`;
-      document.getElementById('btnWA').href = `https://wa.me/${cleanWA.replace('+', '')}`;
-      document.getElementById('btnViber').href = `viber://chat?number=${encodeURIComponent(cleanViber)}`;
-      
-      const ig = c.instagram ? c.instagram.replace('@', '') : '';
-      document.getElementById('btnIG').href = ig ? `https://instagram.com/${ig}` : '#';
-
-      document.getElementById('detailPhone').innerText = c.phone || 'Nije uneto';
-      document.getElementById('detailEmail').innerText = c.email || 'Nije uneto';
-      document.getElementById('detailNotes').innerText = c.notes || 'Nema posebnih napomena.';
-
-      // Render History
-      const histContainer = document.getElementById('detailHistoryContainer');
-      const historyList = c.history || [];
-      if (historyList.length === 0) {
-        histContainer.innerHTML = `<p class="text-xs text-slate-500 italic">Još nema zabeleženih istorijskih tretmana.</p>`;
-      } else {
-        histContainer.innerHTML = historyList.map(h => `
-          <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800/80 flex items-center justify-between text-xs">
-            <div>
-              <span class="font-bold text-slate-200">${formatDateDisplay(h.date)}</span>
-              <p class="text-slate-400 text-[11px]">${escapeHtml(h.note || 'Šišanje')}</p>
-            </div>
-            ${h.price ? `<span class="font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">${escapeHtml(h.price)}</span>` : ''}
-          </div>
-        `).join('');
-      }
-
-      document.getElementById('detailModal').classList.remove('hidden');
-    }
-
-    function closeDetailModal() {
-      document.getElementById('detailModal').classList.add('hidden');
-      currentActiveClientId = null;
-    }
-
-    function openEditModalForCurrent() {
-      if (!currentActiveClientId) return;
-      const id = currentActiveClientId;
-      closeDetailModal();
-      openClientModal(id);
-    }
-
-    async function deleteCurrentClient() {
-      if (!currentActiveClientId) return;
-      const confirmed = await customConfirm('Izbrisati klijenta?', 'Da li ste sigurni da želite trajno ukloniti ovog klijenta i sve podatke o psu?');
-      if (confirmed) {
-        clients = clients.filter(c => c.id !== currentActiveClientId);
-        saveClientsToStorage();
-        closeDetailModal();
-        renderClients();
-        showToast('Klijent je izbrisan.', 'info');
-      }
-    }
-
-    // ONE-CLICK QUICK RECORD GROOMING TODAY
-    function recordGroomingToday() {
-      if (!currentActiveClientId) return;
-      const index = clients.findIndex(c => c.id === currentActiveClientId);
-      if (index === -1) return;
-
-      const todayStr = new Date().toISOString().split('T')[0];
-      clients[index].lastGroomDate = todayStr;
-      if (!clients[index].history) clients[index].history = [];
-
-      clients[index].history.unshift({
-        date: todayStr,
-        note: 'Tretman šišanja i nege'
-      });
-
-      saveClientsToStorage();
-      renderClients();
-      openDetailModal(currentActiveClientId); // refresh modal view
-      showToast('Zabeleženo današnje šišanje! ✂️', 'success');
-    }
-
-    // --- WHATSAPP REMINDER MODAL ---
-    let activeReminderClientId = null;
-
-    function openReminderModal(id) {
-      activeReminderClientId = id;
-      const c = clients.find(item => item.id === id);
-      if (!c) return;
-
-      const days = calculateDaysAgo(c.lastGroomDate);
-      const msg = `Zdravo ${c.firstName}, ovdje Grooming Studio! 🐾 Primijetili smo da je prošlo ${days} dana od zadnjeg šišanja za ${c.dogName}. Da li biste želeli da zakažete novi termin ove nedjelje?`;
-      
-      document.getElementById('reminderText').value = msg;
-      document.getElementById('reminderModal').classList.remove('hidden');
-    }
-
-    function closeReminderModal() {
-      document.getElementById('reminderModal').classList.add('hidden');
-      activeReminderClientId = null;
-    }
-
-    function sendReminderWhatsApp() {
-      if (!activeReminderClientId) return;
-      const c = clients.find(item => item.id === activeReminderClientId);
-      if (!c) return;
-      const txt = encodeURIComponent(document.getElementById('reminderText').value);
-      const cleanWA = (c.whatsapp || c.phone || '').replace(/\s+/g, '').replace('+', '');
-      window.open(`https://wa.me/${cleanWA}?text=${txt}`, '_blank');
-      closeReminderModal();
-    }
-
-    function sendReminderSMS() {
-      if (!activeReminderClientId) return;
-      const c = clients.find(item => item.id === activeReminderClientId);
-      if (!c) return;
-      const txt = encodeURIComponent(document.getElementById('reminderText').value);
-      const cleanPhone = (c.phone || '').replace(/\s+/g, '');
-      window.open(`sms:${cleanPhone}?body=${txt}`, '_blank');
-      closeReminderModal();
-    }
-
-    // --- IMPORT / EXPORT LOGIC ---
-
-    // 1. FILE UPLOAD DISPATCHER (CSV & VCARD)
-    function handleFileUpload(e) {
-      const file = e.target.files[0];
+    // --- IMPORT / EXPORT ---
+    function handleCSVImport(event) {
+      const file = event.target.files[0];
       if (!file) return;
-
       const reader = new FileReader();
-      const fileName = file.name.toLowerCase();
-
-      reader.onload = function(evt) {
-        const content = evt.target.result;
-        if (fileName.endsWith('.vcf') || content.includes('BEGIN:VCARD')) {
-          parseAndImportVCard(content);
-        } else {
-          parseAndImportCSV(content);
+      reader.onload = async (e) => {
+        const lines = e.target.result.split(/\r?\n/).filter(l => l.trim());
+        if (lines.length < 2) return alert('CSV fajl je prazan.');
+        const sep = lines[0].includes(';') ? ';' : ',';
+        let added = 0;
+        for (let i = 1; i < lines.length; i++) {
+          const cols = lines[i].split(sep).map(s => s.replace(/^"|"$/g, '').trim());
+          if (!cols[0] && !cols[2]) continue;
+          const c = {
+            id: 'c_' + Date.now() + '_' + i,
+            firstName: cols[0] || 'Klijent',
+            lastName: cols[1] || '',
+            phone: cols[2] || '',
+            email: cols[3] || '',
+            dogName: cols[4] || 'Pas',
+            dogBreed: cols[5] || '',
+            lastGroomed: cols[6] || '',
+            notes: cols[7] || ''
+          };
+          clients.push(c);
+          await syncClientToCloud(c);
+          added++;
         }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+        renderClients();
+        alert(`Uvezeno ${added} klijenata!`);
+        switchTab('clients');
       };
       reader.readAsText(file);
     }
 
-    // 2. VCARD (.VCF) PARSER
-    function parseAndImportVCard(vcardText) {
-      const cards = vcardText.split('END:VCARD');
-      let count = 0;
-
-      cards.forEach(card => {
-        if (!card.includes('BEGIN:VCARD')) return;
-
-        let fullName = '';
-        let phone = '';
-        let email = '';
-        let notes = '';
-
-        const lines = card.split('\n');
-        lines.forEach(line => {
-          const l = line.trim();
-          if (l.startsWith('FN:')) fullName = l.substring(3).trim();
-          else if (l.startsWith('TEL')) {
-            const parts = l.split(':');
-            if (parts.length > 1) phone = parts[1].trim();
+    function handleVCFImport(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const cards = e.target.result.split('BEGIN:VCARD');
+        let added = 0;
+        for (let i = 1; i < cards.length; i++) {
+          const fnMatch = cards[i].match(/FN:(.*)/);
+          const telMatch = cards[i].match(/TEL[^:]*:(.*)/);
+          if (fnMatch && telMatch) {
+            const parts = fnMatch[1].trim().split(' ');
+            const c = {
+              id: 'c_' + Date.now() + '_' + i,
+              firstName: parts[0] || 'Klijent',
+              lastName: parts.slice(1).join(' '),
+              phone: telMatch[1].trim(),
+              dogName: 'Pas',
+              dogBreed: '',
+              lastGroomed: ''
+            };
+            clients.push(c);
+            await syncClientToCloud(c);
+            added++;
           }
-          else if (l.startsWith('EMAIL')) {
-            const parts = l.split(':');
-            if (parts.length > 1) email = parts[1].trim();
-          }
-          else if (l.startsWith('NOTE:')) notes = l.substring(5).trim();
-        });
-
-        if (fullName || phone) {
-          const nameParts = fullName.split(' ');
-          const fName = nameParts[0] || 'Kontakt';
-          const lName = nameParts.slice(1).join(' ') || '';
-
-          clients.push({
-            id: 'vcard-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4),
-            firstName: fName,
-            lastName: lName,
-            phone: phone,
-            whatsapp: phone,
-            viber: phone,
-            email: email,
-            instagram: '',
-            dogName: fName + ' Pas',
-            dogBreed: 'Mješanac / Nepoznato',
-            coatType: '',
-            lastGroomDate: new Date().toISOString().split('T')[0],
-            notes: notes || 'Uvezeno iz telefona (vCard)',
-            photo: '',
-            history: []
-          });
-          count++;
         }
-      });
-
-      saveClientsToStorage();
-      renderClients();
-      showToast(`Uspješno uvezeno ${count} kontakata iz vCard fajla!`, 'success');
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+        renderClients();
+        alert(`Uvezeno ${added} kontakata iz vCard fajla!`);
+        switchTab('clients');
+      };
+      reader.readAsText(file);
     }
 
-    // 3. CSV PARSER WITH AUTO COLUMN MAPPING
-    function parseAndImportCSV(csvContent) {
-      const lines = csvContent.split(/\r\n|\n/).filter(line => line.trim().length > 0);
-      if (lines.length < 2) {
-        showToast('CSV fajl je prazan ili neispravan!', 'error');
-        return;
-      }
-
-      // Parse headers
-      const headers = lines[0].split(',').map(h => h.replace(/^"(.*)"$/, '$1').trim().toLowerCase());
-
-      // Find field indices dynamically
-      const findIdx = (keywords) => headers.findIndex(h => keywords.some(k => h.includes(k)));
-
-      const firstNameIdx = findIdx(['ime', 'first', 'owner']);
-      const lastNameIdx = findIdx(['prezime', 'last']);
-      const phoneIdx = findIdx(['tel', 'phone', 'mobilni', 'broj']);
-      const emailIdx = findIdx(['email', 'pošta']);
-      const dogNameIdx = findIdx(['pas', 'dog', 'ljubimac']);
-      const dogBreedIdx = findIdx(['rasa', 'breed', 'vrsta']);
-      const notesIdx = findIdx(['note', 'napomena', 'opis', 'detalji']);
-      const dateIdx = findIdx(['datum', 'date', 'šišanje', 'groom']);
-
-      let importedCount = 0;
-
-      for (let i = 1; i < lines.length; i++) {
-        // Splitting considering possible quotes
-        const row = lines[i].split(/,(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)/).map(cell => cell.replace(/^"(.*)"$/, '$1').trim());
-        if (row.length === 0) continue;
-
-        const fName = firstNameIdx !== -1 && row[firstNameIdx] ? row[firstNameIdx] : 'Klijent';
-        const lName = lastNameIdx !== -1 && row[lastNameIdx] ? row[lastNameIdx] : '';
-        const phone = phoneIdx !== -1 && row[phoneIdx] ? row[phoneIdx] : '';
-        const dogN = dogNameIdx !== -1 && row[dogNameIdx] ? row[dogNameIdx] : 'Pas';
-        const dogB = dogBreedIdx !== -1 && row[dogBreedIdx] ? row[dogBreedIdx] : 'Nepoznato';
-        const note = notesIdx !== -1 && row[notesIdx] ? row[notesIdx] : '';
-        const date = dateIdx !== -1 && row[dateIdx] ? row[dateIdx] : new Date().toISOString().split('T')[0];
-
-        clients.push({
-          id: 'csv-' + Date.now() + '-' + i,
-          firstName: fName,
-          lastName: lName,
-          phone: phone,
-          whatsapp: phone,
-          viber: phone,
-          email: emailIdx !== -1 && row[emailIdx] ? row[emailIdx] : '',
-          instagram: '',
-          dogName: dogN,
-          dogBreed: dogB,
-          coatType: '',
-          lastGroomDate: date,
-          notes: note,
-          photo: '',
-          history: []
-        });
-        importedCount++;
-      }
-
-      saveClientsToStorage();
-      renderClients();
-      showToast(`Uspješno uvezeno ${importedCount} klijenta iz CSV tabele!`, 'success');
+    function exportVCF() {
+      const vcf = clients.map(c => {
+        const fullName = `${c.firstName} ${c.lastName || ''} (${c.dogName}${c.dogBreed ? ' - ' + c.dogBreed : ''})`.trim();
+        return [
+          'BEGIN:VCARD',
+          'VERSION:3.0',
+          `FN:${fullName}`,
+          `N:${c.lastName || ''};${c.firstName};;;`,
+          `TEL;TYPE=CELL:${c.phone}`,
+          c.email ? `EMAIL:${c.email}` : '',
+          `NOTE:Pas: ${c.dogName} | Rasa: ${c.dogBreed || '-'} | Zadnje sisanje: ${c.lastGroomed || '-'} | ${c.notes || ''}`,
+          'END:VCARD'
+        ].filter(Boolean).join('\r\n');
+      }).join('\r\n');
+      downloadFile('grooming_kontakti_iphone.vcf', vcf, 'text/vcard');
     }
 
-    // 4. EXPORT TO IPHONE VCARD (.VCF) WITH DOG NAME IN CONTACT NAME
-    function exportToVCard() {
-      if (clients.length === 0) {
-        showToast('Nema klijenta za izvoz!', 'error');
-        return;
-      }
-
-      let vcardString = '';
-
-      clients.forEach(c => {
-        const displayName = `${c.firstName} ${c.lastName || ''} (${c.dogName || 'Pas'} - ${c.dogBreed || 'Grooming'})`.trim();
-        vcardString += `BEGIN:VCARD\n`;
-        vcardString += `VERSION:3.0\n`;
-        vcardString += `FN:${displayName}\n`;
-        vcardString += `N:${c.lastName || ''};${c.firstName};;;${c.dogName ? '(' + c.dogName + ')' : ''}\n`;
-        if (c.phone) vcardString += `TEL;TYPE=CELL:${c.phone}\n`;
-        if (c.email) vcardString += `EMAIL:${c.email}\n`;
-        if (c.notes || c.coatType) vcardString += `NOTE:Pas: ${c.dogName} | Rasa: ${c.dogBreed} | Napomene: ${c.notes || ''}\n`;
-        vcardString += `END:VCARD\n`;
-      });
-
-      downloadFile(vcardString, 'Grooming_Kontakti_iPhone.vcf', 'text/vcard');
-      showToast('Preuzet vCard fajl! Otvorite ga na iPhone-u za sinhronizaciju.', 'success');
+    function exportCSV() {
+      const header = 'Ime,Prezime,Telefon,Email,ImePsa,Rasa,ZadnjeSisanje,Napomene\n';
+      const rows = clients.map(c =>
+        [c.firstName, c.lastName, c.phone, c.email, c.dogName, c.dogBreed, c.lastGroomed, c.notes]
+          .map(v => `"${(v || '').replace(/"/g, '""')}"`).join(',')
+      ).join('\n');
+      downloadFile('grooming_klijenti.csv', header + rows, 'text/csv');
     }
 
-    // 5. EXPORT TO CSV
-    function exportToCSV() {
-      if (clients.length === 0) {
-        showToast('Nema klijenta za izvoz!', 'error');
-        return;
-      }
-
-      const headers = ['Ime', 'Prezime', 'Telefon', 'WhatsApp', 'Viber', 'Email', 'Instagram', 'Ime Psa', 'Rasa Psa', 'Tip Dlake', 'Zadnje Šišanje', 'Napomene'];
-      const rows = clients.map(c => [
-        `"${c.firstName || ''}"`,
-        `"${c.lastName || ''}"`,
-        `"${c.phone || ''}"`,
-        `"${c.whatsapp || ''}"`,
-        `"${c.viber || ''}"`,
-        `"${c.email || ''}"`,
-        `"${c.instagram || ''}"`,
-        `"${c.dogName || ''}"`,
-        `"${c.dogBreed || ''}"`,
-        `"${c.coatType || ''}"`,
-        `"${c.lastGroomDate || ''}"`,
-        `"${(c.notes || '').replace(/"/g, '""')}"`
-      ]);
-
-      const csvContent = "\uFEFF" + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-      downloadFile(csvContent, 'Grooming_Baza_Klijenata.csv', 'text/csv;charset=utf-8;');
-      showToast('CSV fajl je preuzet!', 'success');
+    function exportJSON() {
+      downloadFile('grooming_backup.json', JSON.stringify(clients, null, 2), 'application/json');
     }
 
-    // 6. EXPORT TO JSON BACKUP
-    function exportToJSON() {
-      if (clients.length === 0) {
-        showToast('Nema klijenta za izvoz!', 'error');
-        return;
-      }
-      const dataStr = JSON.stringify(clients, null, 2);
-      downloadFile(dataStr, 'Grooming_Backup_Full.json', 'application/json');
-      showToast('JSON Rezervna kopija preuzeta!', 'success');
-    }
-
-    // HELPER DOWNLOAD FUNCTION
-    function downloadFile(content, fileName, mimeType) {
-      const blob = new Blob([content], { type: mimeType });
-      const url = URL.createObjectURL(blob);
+    function downloadFile(filename, content, mime) {
+      const blob = new Blob([content], { type: mime });
       const a = document.createElement('a');
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
       a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
     }
 
-    // --- HELPER UTILITIES ---
-    function formatDateDisplay(dateStr) {
-      if (!dateStr) return '';
-      const p = dateStr.split('-');
-      if (p.length === 3) return `${p[2]}.${p[1]}.${p[0]}.`;
-      return dateStr;
-    }
-
-    function escapeHtml(str) {
-      if (!str) return '';
-      return str.replace(/[&<>"']/g, function(m) {
-        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
-      });
-    }
-
-    function showToast(message, type = 'info') {
-      const container = document.getElementById('toastContainer');
-      const toast = document.createElement('div');
-      
-      const bg = type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-rose-600' : 'bg-brand-600';
-      
-      toast.className = `${bg} text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 transform transition duration-300 translate-y-2 opacity-0 pointer-events-auto`;
-      toast.innerHTML = `<span>${type === 'success' ? '✅' : type === 'error' ? '⚠️' : 'ℹ️'}</span> <span>${escapeHtml(message)}</span>`;
-
-      container.appendChild(toast);
-
-      setTimeout(() => {
-        toast.classList.remove('translate-y-2', 'opacity-0');
-      }, 50);
-
-      setTimeout(() => {
-        toast.classList.add('opacity-0', 'translate-y-2');
-        setTimeout(() => toast.remove(), 300);
-      }, 3500);
-    }
-
-    function customConfirm(title, message) {
-      return new Promise((resolve) => {
-        document.getElementById('confirmTitle').innerText = title;
-        document.getElementById('confirmMessage').innerText = message;
-        document.getElementById('confirmModal').classList.remove('hidden');
-        confirmResolver = resolve;
-      });
-    }
-
-    function closeConfirmModal(result) {
-      document.getElementById('confirmModal').classList.add('hidden');
-      if (confirmResolver) {
-        confirmResolver(result);
-        confirmResolver = null;
-      }
+    async function loadDemoData() {
+      const demo = [
+        { id: 'demo_1', firstName: 'Ana', lastName: 'Petrović', phone: '+382 69 111 222', dogName: 'Bobi', dogBreed: 'Kraljevska pudla', dogType: 'Kovrdžava / Srednji', lastGroomed: new Date(Date.now() - 12 * 86400000).toISOString().split('T')[0], notes: 'Nož 7F na tijelu, makaze na glavi.' },
+        { id: 'demo_2', firstName: 'Marko', lastName: 'Jovanović', phone: '+382 67 333 444', dogName: 'Luna', dogBreed: 'Maltezer', dogType: 'Duga dlaka / Mali', lastGroomed: new Date(Date.now() - 48 * 86400000).toISOString().split('T')[0], notes: 'Osjetljiva oko šapa.' }
+      ];
+      clients = [...demo, ...clients];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+      renderClients();
+      for (const c of demo) await syncClientToCloud(c);
     }
   </script>
 </body>
