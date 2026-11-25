@@ -976,7 +976,6 @@
       document.getElementById('statFullCount').textContent = fullCount;
       document.getElementById('statBathCount').textContent = bathCount;
 
-      // Sort summaries by revenue/visits desc
       clientSummaries.sort((a, b) => b.revenue - a.revenue || b.visits - a.visits);
       const breakdownEl = document.getElementById('statsClientBreakdown');
       if (clientSummaries.length === 0) {
@@ -995,7 +994,6 @@
         `).join('');
       }
 
-      // Sort all records newest first
       allRecords.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
       const historyEl = document.getElementById('statsHistoryList');
       if (allRecords.length === 0) {
@@ -1104,7 +1102,6 @@
             price: servicePrice
           });
         } else {
-          // Update latest entry if date matches or client is newly edited with a new date
           const alreadyHasDate = history.some(h => h.date === lastGroomed);
           if (!alreadyHasDate) {
             history.push({
@@ -1196,7 +1193,6 @@
         price
       });
 
-      // Keep latest grooming date
       const sortedDates = c.history.map(h => h.date).sort();
       c.lastGroomed = sortedDates[sortedDates.length - 1];
       c.serviceType = serviceType;
@@ -1303,7 +1299,7 @@
       if (!file) return;
       const reader = new FileReader();
       reader.onload = async (e) => {
-      ⁠const lines = e.target.result.split(/\r?\n/).filter(l => l.trim());⁠
+        const lines = e.target.result.split(/\r?\n/).filter(l => l.trim());
         if (lines.length < 2) return alert('CSV fajl je prazan.');
         const sep = lines[0].includes(';') ? ';' : ',';
         let added = 0;
@@ -1382,22 +1378,18 @@
           c.email ? `EMAIL:${c.email}` : '',
           `NOTE:Pas: ${c.dogName} | Rasa: ${c.dogBreed || '-'} | Zadnje sisanje: ${c.lastGroomed || '-'} | ${c.notes || ''}`,
           'END:VCARD'
-        ].filter(Boolean).join('
-');
-      }).join('
-');
+        ].filter(Boolean).join('\n');
+      }).join('\n');
       downloadFile('grooming_kontakti_iphone.vcf', vcf, 'text/vcard');
     }
 
     function exportCSV() {
-      const header = 'Ime,Prezime,Telefon,Email,ImePsa,Rasa,ZadnjeSisanje,Usluga,CijenaEUR,Napomene
-';
+      const header = 'Ime,Prezime,Telefon,Email,ImePsa,Rasa,ZadnjeSisanje,Usluga,CijenaEUR,Napomene\n';
       const rows = clients.map(c => {
         const svc = SERVICES[c.serviceType] || SERVICES.full;
         return [c.firstName, c.lastName, c.phone, c.email, c.dogName, c.dogBreed, c.lastGroomed, svc.label, svc.price, c.notes]
           .map(v => `"${(v || '').toString().replace(/"/g, '""')}"`).join(',');
-      }).join('
-');
+      }).join('\n');
       downloadFile('grooming_klijenti.csv', header + rows, 'text/csv');
     }
 
