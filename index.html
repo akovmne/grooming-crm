@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="sr" class="h-full bg-slate-900 text-slate-100">
+<html lang="sr" class="h-full dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -13,6 +13,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           colors: {
@@ -38,12 +39,166 @@
     body {
       -webkit-tap-highlight-color: transparent;
       padding-bottom: env(safe-area-inset-bottom);
+      transition: background-color 0.35s ease, color 0.35s ease;
     }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Daytime (Light Mode - White Background) Overrides */
+    html:not(.dark) {
+      background-color: #ffffff;
+      color: #0f172a;
+    }
+    html:not(.dark) body {
+      background-color: #ffffff;
+      color: #0f172a;
+    }
+    html:not(.dark) header,
+    html:not(.dark) nav {
+      background-color: rgba(255, 255, 255, 0.94) !important;
+      border-color: #e2e8f0 !important;
+    }
+    html:not(.dark) .text-white {
+      color: #0f172a !important;
+    }
+    /* Keep white text inside solid colored buttons/badges */
+    html:not(.dark) .bg-brand-600,
+    html:not(.dark) .bg-brand-600 *,
+    html:not(.dark) .bg-emerald-600,
+    html:not(.dark) .bg-emerald-600 *,
+    html:not(.dark) .bg-rose-600,
+    html:not(.dark) .bg-rose-600 *,
+    html:not(.dark) button.hover\:bg-brand-600:hover,
+    html:not(.dark) button.hover\:bg-brand-600:hover * {
+      color: #ffffff !important;
+    }
+    html:not(.dark) .text-slate-100,
+    html:not(.dark) .text-slate-200 {
+      color: #1e293b !important;
+    }
+    html:not(.dark) .text-slate-300 {
+      color: #334155 !important;
+    }
+    html:not(.dark) .text-slate-400 {
+      color: #64748b !important;
+    }
+    html:not(.dark) .text-slate-500 {
+      color: #94a3b8 !important;
+    }
+    html:not(.dark) .text-brand-400,
+    html:not(.dark) .text-brand-300 {
+      color: #4f46e5 !important;
+    }
+    html:not(.dark) .text-emerald-300 {
+      color: #047857 !important;
+    }
+    html:not(.dark) .text-emerald-300\/80 {
+      color: #065f46 !important;
+    }
+    html:not(.dark) .text-sky-400 {
+      color: #0284c7 !important;
+    }
+    html:not(.dark) .text-amber-300 {
+      color: #b45309 !important;
+    }
+    html:not(.dark) .text-rose-300 {
+      color: #be123c !important;
+    }
+    html:not(.dark) .text-purple-200,
+    html:not(.dark) .text-purple-300 {
+      color: #6d28d9 !important;
+    }
+    html:not(.dark) .text-pink-300 {
+      color: #be185d !important;
+    }
+
+    /* Surfaces & Cards in Light Mode */
+    html:not(.dark) .bg-slate-900,
+    html:not(.dark) .bg-slate-900\/90,
+    html:not(.dark) .bg-slate-900\/95 {
+      background-color: #ffffff !important;
+    }
+    html:not(.dark) .bg-slate-900\/80,
+    html:not(.dark) .bg-slate-900\/70,
+    html:not(.dark) .bg-slate-900\/60,
+    html:not(.dark) .bg-slate-900\/50 {
+      background-color: #f8fafc !important;
+    }
+    html:not(.dark) .bg-slate-800,
+    html:not(.dark) .bg-slate-800\/80,
+    html:not(.dark) .bg-slate-800\/60,
+    html:not(.dark) .bg-slate-800\/40 {
+      background-color: #f8fafc !important;
+    }
+    html:not(.dark) .hover\:bg-slate-800:hover,
+    html:not(.dark) .hover\:bg-slate-700:hover,
+    html:not(.dark) .hover\:bg-slate-900:hover {
+      background-color: #f1f5f9 !important;
+    }
+    html:not(.dark) .bg-slate-700,
+    html:not(.dark) .bg-slate-700\/80 {
+      background-color: #e2e8f0 !important;
+    }
+    html:not(.dark) .border-slate-800,
+    html:not(.dark) .border-slate-700,
+    html:not(.dark) .border-slate-700\/80,
+    html:not(.dark) .border-slate-700\/70,
+    html:not(.dark) .border-slate-700\/60,
+    html:not(.dark) .border-slate-700\/50 {
+      border-color: #e2e8f0 !important;
+    }
+
+    /* Tinted Badges & Cards in Light Mode */
+    html:not(.dark) .bg-emerald-950,
+    html:not(.dark) .bg-emerald-950\/90,
+    html:not(.dark) .bg-emerald-950\/80,
+    html:not(.dark) .bg-emerald-950\/70,
+    html:not(.dark) .bg-emerald-950\/40,
+    html:not(.dark) .bg-emerald-900\/60 {
+      background-color: #ecfdf5 !important;
+    }
+    html:not(.dark) .border-emerald-800\/70,
+    html:not(.dark) .border-emerald-800\/60,
+    html:not(.dark) .border-emerald-800\/50,
+    html:not(.dark) .border-emerald-700\/70,
+    html:not(.dark) .border-emerald-700 {
+      border-color: #a7f3d0 !important;
+    }
+    html:not(.dark) .bg-amber-950\/80 {
+      background-color: #fffbeb !important;
+    }
+    html:not(.dark) .border-amber-800\/70 {
+      border-color: #fde68a !important;
+    }
+    html:not(.dark) .bg-rose-950,
+    html:not(.dark) .bg-rose-950\/80,
+    html:not(.dark) .bg-rose-950\/60 {
+      background-color: #fff1f2 !important;
+    }
+    html:not(.dark) .border-rose-800\/70,
+    html:not(.dark) .border-rose-800\/60 {
+      border-color: #fecdd3 !important;
+    }
+    html:not(.dark) .bg-purple-950,
+    html:not(.dark) .bg-purple-900\/60 {
+      background-color: #f5f3ff !important;
+    }
+    html:not(.dark) .bg-pink-950 {
+      background-color: #fdf2f8 !important;
+    }
+    html:not(.dark) .bg-brand-900\/30 {
+      background-color: #eef2ff !important;
+    }
+    html:not(.dark) input,
+    html:not(.dark) textarea,
+    html:not(.dark) select {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+      border-color: #cbd5e1 !important;
+    }
   </style>
 </head>
-<body class="h-full flex flex-col font-sans antialiased selection:bg-brand-500 selection:text-white">
+<body class="h-full flex flex-col font-sans antialiased bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100 selection:bg-brand-500 selection:text-white">
 
   <!-- Top Header -->
   <header class="sticky top-0 z-30 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 py-3">
@@ -63,9 +218,15 @@
         </div>
       </div>
 
-      <button onclick="openClientModal()" class="bg-brand-600 hover:bg-brand-500 active:scale-95 transition text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-xl shadow-lg shadow-brand-600/25 shrink-0 flex items-center gap-1.5">
-        <span>+ Novi klijent</span>
-      </button>
+      <div class="flex items-center gap-2 shrink-0">
+        <button onclick="cycleThemeMode()" id="themeToggleBtn" title="Automatski dan/noć režim (06:00 - 18:00)" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-medium px-2.5 py-2 rounded-xl transition flex items-center gap-1">
+          <span id="themeIcon">☀️</span>
+          <span id="themeLabel" class="hidden sm:inline">Dan</span>
+        </button>
+        <button onclick="openClientModal()" class="bg-brand-600 hover:bg-brand-500 active:scale-95 transition text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-xl shadow-lg shadow-brand-600/25 shrink-0 flex items-center gap-1.5">
+          <span>+ Novi klijent</span>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -494,8 +655,60 @@
 
     clients = clients.map(normalizeClient);
 
+    // --- AUTOMATIC DAYTIME / NIGHTTIME THEME SCHEDULE ---
+    const THEME_MODE_KEY = 'grooming_crm_theme_mode'; // 'auto' | 'light' | 'dark'
+    const DAY_START_HOUR = 6;  // 06:00 -> White (Daytime)
+    const NIGHT_START_HOUR = 18; // 18:00 -> Black/Dark (Nighttime)
+
+    function isDaytimeSchedule(date = new Date()) {
+      const hour = date.getHours();
+      return hour >= DAY_START_HOUR && hour < NIGHT_START_HOUR;
+    }
+
+    function applyScheduledTheme() {
+      const savedMode = localStorage.getItem(THEME_MODE_KEY) || 'auto';
+      const isDay = savedMode === 'auto' ? isDaytimeSchedule() : (savedMode === 'light');
+      const root = document.documentElement;
+      const metaTheme = document.querySelector('meta[name="theme-color"]');
+      const iconEl = document.getElementById('themeIcon');
+      const labelEl = document.getElementById('themeLabel');
+
+      if (isDay) {
+        root.classList.remove('dark');
+        if (metaTheme) metaTheme.setAttribute('content', '#ffffff');
+      } else {
+        root.classList.add('dark');
+        if (metaTheme) metaTheme.setAttribute('content', '#0f172a');
+      }
+
+      if (iconEl && labelEl) {
+        if (savedMode === 'auto') {
+          iconEl.textContent = isDay ? '☀️' : '🌙';
+          labelEl.textContent = isDay ? 'Auto (Dan)' : 'Auto (Noć)';
+        } else if (savedMode === 'light') {
+          iconEl.textContent = '☀️';
+          labelEl.textContent = 'Dan';
+        } else {
+          iconEl.textContent = '🌙';
+          labelEl.textContent = 'Noć';
+        }
+      }
+    }
+
+    function cycleThemeMode() {
+      const current = localStorage.getItem(THEME_MODE_KEY) || 'auto';
+      const next = current === 'auto' ? 'light' : (current === 'light' ? 'dark' : 'auto');
+      localStorage.setItem(THEME_MODE_KEY, next);
+      applyScheduledTheme();
+    }
+
+    // Apply immediately before paint & re-check every 30 seconds for automatic transition
+    applyScheduledTheme();
+    setInterval(applyScheduledTheme, 30000);
+
     // --- INIT ---
     window.addEventListener('DOMContentLoaded', () => {
+      applyScheduledTheme();
       renderClients();
       initCloudFromStorage();
 
