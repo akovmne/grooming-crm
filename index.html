@@ -1303,9 +1303,7 @@
       if (!file) return;
       const reader = new FileReader();
       reader.onload = async (e) => {
-       const lines = e.target.result.split(/\r?\n/).filter(l => l.trim());
-
-/).filter(l => l.trim());
+      ⁠const lines = e.target.result.split(/\r?\n/).filter(l => l.trim());⁠
         if (lines.length < 2) return alert('CSV fajl je prazan.');
         const sep = lines[0].includes(';') ? ';' : ',';
         let added = 0;
