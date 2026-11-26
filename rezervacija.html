@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>GroomingPG — Rezervacija termina</title>
+  <meta name="description" content="Potvrda i detalji rezervisanog termina za njegu pasa — GroomingPG Podgorica.">
+  <meta property="og:title" content="GroomingPG — Rezervacija termina">
+  <meta property="og:description" content="Detalji termina, usluge i lokacije — GroomingPG Podgorica.">
+  <meta name="theme-color" content="#0f172a">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-100 antialiased flex items-center justify-center p-4">
+
+  <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden">
+    <!-- Top Banner -->
+    <div class="bg-gradient-to-r from-indigo-600/25 via-slate-900 to-emerald-600/20 px-5 py-4 border-b border-slate-800 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-11 h-11 rounded-2xl bg-indigo-600 flex items-center justify-center text-xl shadow-lg shadow-indigo-600/30 shrink-0">
+          🐾
+        </div>
+        <div class="min-w-0">
+          <div class="text-[11px] font-semibold uppercase tracking-wider text-indigo-300">Potvrda termina</div>
+          <h1 class="text-lg font-extrabold text-white leading-tight truncate">GroomingPG</h1>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-1.5 shrink-0">
+        <span id="statusBadge" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-950/90 text-emerald-300 border border-emerald-700/70">
+          ✓ Rezervisano
+        </span>
+        <button type="button" onclick="closeOrGoBack()" title="Zatvori prozor ili se vrati nazad"
+          class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+          ✕ Nazad
+        </button>
+      </div>
+    </div>
+
+    <!-- Card Body -->
+    <div class="p-5 space-y-4 text-sm">
+      <!-- Schedule Highlight -->
+      <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-4 flex items-center justify-between gap-2">
+        <div>
+          <div class="text-[11px] text-slate-400">Termin</div>
+          <div id="cardSchedule" class="text-base font-bold text-white mt-0.5">—</div>
+        </div>
+        <div class="text-right">
+          <div class="text-[11px] text-slate-400">Usluga</div>
+          <div id="cardService" class="text-xs font-semibold text-indigo-300 mt-0.5">Kupanje i šišanje</div>
+        </div>
+      </div>
+
+      <!-- Client & Dog Details -->
+      <div class="bg-slate-800/50 border border-slate-800 rounded-2xl p-4 space-y-2.5 text-xs">
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-slate-400">Vlasnik</span>
+          <strong id="cardOwner" class="text-white text-right">Klijent</strong>
+        </div>
+        <div class="flex items-center justify-between gap-2 border-t border-slate-800 pt-2">
+          <span class="text-slate-400">Pas</span>
+          <strong id="cardDog" class="text-white text-right">Pas</strong>
+        </div>
+        <div class="flex items-center justify-between gap-2 border-t border-slate-800 pt-2">
+          <span class="text-slate-400">Rasa</span>
+          <span id="cardBreed" class="text-slate-200 text-right">—</span>
+        </div>
+        <div class="flex items-center justify-between gap-2 border-t border-slate-800 pt-2">
+          <span class="text-slate-400">Tip dlake</span>
+          <span id="cardHair" class="text-slate-200 text-right">—</span>
+        </div>
+        <div class="flex items-center justify-between gap-2 border-t border-slate-800 pt-2">
+          <span class="text-slate-400">Lokacija</span>
+          <a id="cardLocationLink" href="#" target="_blank" rel="noopener noreferrer"
+            class="font-bold text-emerald-300 hover:text-emerald-200 underline underline-offset-2 text-right">
+            📍 <span id="cardLocation">F62R+XGW Podgorica, Montenegro</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Direct Salon Contact -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs pt-1">
+        <a id="directTelBtn" href="tel:+38269012911" class="bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2.5 px-2 rounded-xl border border-slate-700/70 transition">
+          📞 069 012 911
+        </a>
+        <a id="directWaBtn" href="https://wa.me/38269012911" target="_blank" rel="noopener noreferrer"
+          class="bg-slate-800 hover:bg-slate-700 text-emerald-300 font-semibold py-2.5 px-2 rounded-xl border border-slate-700/70 transition">
+          💬 WhatsApp
+        </a>
+        <a id="directViberBtn" href="viber://chat?number=%2B38269012911"
+          class="bg-slate-800 hover:bg-slate-700 text-purple-300 font-semibold py-2.5 px-2 rounded-xl border border-slate-700/70 transition">
+          💜 Viber
+        </a>
+        <a id="directIgBtn" href="https://instagram.com/groomingpg" target="_blank" rel="noopener noreferrer"
+          class="bg-slate-800 hover:bg-slate-700 text-pink-300 font-semibold py-2.5 px-2 rounded-xl border border-slate-700/70 transition">
+          📸 Instagram
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const DEFAULT_LOCATION = 'F62R+XGW Podgorica, Montenegro';
+    const SALON_PHONE_INTL = '38269012911';
+    const SALON_INSTAGRAM_HANDLE = 'groomingpg';
+
+    function closeOrGoBack() {
+      if (window.opener && !window.opener.closed) {
+        window.close();
+        return;
+      }
+      if (window.history.length > 1) {
+        window.history.back();
+        return;
+      }
+      window.location.href = 'index.html';
+    }
+
+    function getParams() {
+      const p = new URLSearchParams(window.location.search);
+      return {
+        owner: (p.get('vlasnik') || 'Klijent').trim(),
+        dog: (p.get('pas') || 'Pas').trim(),
+        breed: (p.get('rasa') || 'Nije navedeno').trim(),
+        hair: (p.get('dlaka') || 'Nije navedeno').trim(),
+        date: (p.get('datum') || '').trim(),
+        day: (p.get('dan') || '').trim(),
+        month: (() => {
+          const m = (p.get('mesec') || '').trim();
+          return m ? m.charAt(0).toUpperCase() + m.slice(1) : '';
+        })(),
+        time: (p.get('vreme') || '10:00').trim(),
+        service: (p.get('usluga') || 'Kupanje i šišanje').trim(),
+        location: (p.get('lokacija') || DEFAULT_LOCATION).trim()
+      };
+    }
+
+    function formatSchedule(data) {
+      let dayNum = '';
+      if (data.date && data.date.split('-').length === 3) {
+        const parsedDay = parseInt(data.date.split('-')[2], 10);
+        if (!isNaN(parsedDay)) dayNum = parsedDay + '.';
+      }
+      const parts = [data.day, dayNum, data.month].filter(Boolean).join(' ');
+      const timePart = data.time ? `u ${data.time}h` : '';
+      return [parts, timePart].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim() || 'Po dogovoru';
+    }
+
+    (function initCard() {
+      const data = getParams();
+      const scheduleText = formatSchedule(data);
+      const mapsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.location)}`;
+      const igClean = SALON_INSTAGRAM_HANDLE.replace(/^@/, '').trim();
+
+      document.title = `GroomingPG — ${data.dog} (${data.owner})`;
+      document.getElementById('cardSchedule').textContent = scheduleText;
+      document.getElementById('cardService').textContent = data.service;
+      document.getElementById('cardOwner').textContent = data.owner;
+      document.getElementById('cardDog').textContent = data.dog;
+      document.getElementById('cardBreed').textContent = data.breed;
+      document.getElementById('cardHair').textContent = data.hair;
+      document.getElementById('cardLocation').textContent = data.location;
+      document.getElementById('cardLocationLink').href = mapsHref;
+
+      document.getElementById('directTelBtn').href = `tel:+${SALON_PHONE_INTL}`;
+      document.getElementById('directWaBtn').href = `https://wa.me/${SALON_PHONE_INTL}`;
+      document.getElementById('directViberBtn').href = `viber://chat?number=%2B${SALON_PHONE_INTL}`;
+      document.getElementById('directIgBtn').href = `https://instagram.com/${encodeURIComponent(igClean)}`;
+    })();
+  </script>
+</body>
+</html>
