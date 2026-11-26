@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="sr" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GroomingPG — Potvrda rezervacije</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              300: '#67e8f9',
+              400: '#22d3ee',
+              500: '#06b6d4',
+              600: '#0284c7'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      transition: background-color 0.35s ease, color 0.35s ease;
+    }
+
+    html:not(.dark) {
+      background-color: #ffffff;
+      color: #0f172a;
+    }
+    html:not(.dark) body {
+      background: linear-gradient(180deg, #f0fdfa 0%, #ffffff 100%) !important;
+      color: #0f172a !important;
+    }
+    html:not(.dark) .card-shell {
+      background-color: #ffffff !important;
+      border-color: #bae6fd !important;
+      box-shadow: 0 20px 50px rgba(2, 132, 199, 0.12) !important;
+    }
+    html:not(.dark) .card-header-tint {
+      background: linear-gradient(135deg, #e0f2fe 0%, #ccfbf1 100%) !important;
+      border-color: #bae6fd !important;
+    }
+    html:not(.dark) .text-white {
+      color: #0f172a !important;
+    }
+    html:not(.dark) .text-slate-200,
+    html:not(.dark) .text-slate-300 {
+      color: #334155 !important;
+    }
+    html:not(.dark) .text-slate-400 {
+      color: #64748b !important;
+    }
+    html:not(.dark) .info-panel {
+      background-color: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+    }
+    html:not(.dark) .info-row-border {
+      border-color: #e2e8f0 !important;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 antialiased">
+  <div class="card-shell w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
+    <!-- Header -->
+    <div class="card-header-tint bg-gradient-to-br from-sky-900/60 via-slate-900 to-teal-900/50 p-5 border-b border-slate-800">
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-sky-500 to-teal-500 flex items-center justify-center text-xl shadow-lg shadow-cyan-500/20 shrink-0">
+            🐾
+          </div>
+          <div class="min-w-0">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-brand-300">Potvrda termina</div>
+            <h1 class="text-lg font-extrabold text-white truncate">GroomingPG</h1>
+          </div>
+        </div>
+        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-950/90 text-emerald-300 border border-emerald-700/70 shrink-0">
+          ✓ Rezervisano
+        </span>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="p-5 space-y-4">
+      <!-- Date & Time Highlight -->
+      <div class="info-panel bg-slate-800/70 border border-brand-500/30 rounded-2xl p-4 flex items-center justify-between gap-3">
+        <div>
+          <div class="text-[11px] text-slate-400">Termin</div>
+          <div id="resSchedule" class="text-base font-extrabold text-white mt-0.5">Zakazani termin</div>
+        </div>
+        <div id="resServiceBadge" class="hidden text-xs font-bold px-3 py-1.5 rounded-xl bg-brand-600/20 text-brand-300 border border-brand-500/40 text-right"></div>
+      </div>
+
+      <!-- Details -->
+      <div class="info-panel bg-slate-800/40 border border-slate-800 rounded-2xl divide-y divide-slate-800 info-row-border text-sm">
+        <div class="px-4 py-3 flex items-center justify-between gap-3">
+          <span class="text-xs text-slate-400">Vlasnik</span>
+          <strong id="resOwner" class="text-white text-right">—</strong>
+        </div>
+        <div class="px-4 py-3 flex items-center justify-between gap-3">
+          <span class="text-xs text-slate-400">Pas</span>
+          <strong id="resDog" class="text-white text-right">—</strong>
+        </div>
+        <div class="px-4 py-3 flex items-center justify-between gap-3">
+          <span class="text-xs text-slate-400">Rasa</span>
+          <span id="resBreed" class="text-slate-200 text-right">—</span>
+        </div>
+        <div class="px-4 py-3 flex items-center justify-between gap-3">
+          <span class="text-xs text-slate-400">Tip dlake</span>
+          <span id="resHair" class="text-slate-200 text-right">—</span>
+        </div>
+        <div class="px-4 py-3 flex items-center justify-between gap-3">
+          <span class="text-xs text-slate-400">Lokacija</span>
+          <a id="resLocationLink" href="#" target="_blank" rel="noopener noreferrer" class="text-brand-300 hover:text-brand-400 font-semibold text-xs text-right underline underline-offset-2">
+            📍 F62R+XGW Podgorica, Montenegro
+          </a>
+        </div>
+      </div>
+
+      <!-- Contact Actions -->
+      <div class="grid grid-cols-4 gap-2 pt-1 text-center text-xs">
+        <a href="tel:+38269012911" class="bg-slate-800 hover:bg-slate-700 text-white py-2.5 px-2 rounded-xl font-semibold transition flex flex-col items-center justify-center gap-1">
+          <span>📞</span>
+          <span>069 012 911</span>
+        </a>
+        <a id="waLink" href="https://wa.me/38269012911" target="_blank" rel="noopener noreferrer" class="bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-800/60 py-2.5 px-2 rounded-xl font-semibold transition flex flex-col items-center justify-center gap-1">
+          <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12.031 2c-5.516 0-9.969 4.453-9.969 9.969 0 1.766.453 3.484 1.328 5.016L2 22l5.156-1.359a9.92 9.92 0 0 0 4.875 1.25h.005c5.516 0 9.969-4.453 9.969-9.969 0-2.672-1.047-5.172-2.922-7.062A9.91 9.91 0 0 0 12.031 2zm5.813 14.125c-.25.703-1.438 1.344-1.984 1.422-.516.078-1.172.109-1.891-.109-.438-.141-1-.328-1.719-.641-3.031-1.313-5.016-4.359-5.172-4.563-.156-.203-1.234-1.641-1.234-3.125s.781-2.219 1.063-2.516c.281-.297.609-.375.813-.375.203 0 .406 0 .594.016.188 0 .438-.078.688.516.25.609.859 2.094.938 2.25.078.156.125.344.031.547-.094.203-.141.328-.281.5-.141.172-.297.391-.422.516-.141.141-.281.297-.125.578.156.281.703 1.156 1.5 1.875 1.031.922 1.891 1.203 2.172 1.344.281.141.438.109.609-.063.172-.172.703-.813.891-1.094.188-.281.375-.234.625-.141.25.094 1.609.766 1.891.906.281.141.469.203.531.328.078.125.078.719-.172 1.422z"/>
+          </svg>
+          <span>WhatsApp</span>
+        </a>
+        <a id="viberLink" href="viber://chat?number=%2B38269012911" class="bg-purple-950/80 hover:bg-purple-900 text-purple-300 border border-purple-800/60 py-2.5 px-2 rounded-xl font-semibold transition flex flex-col items-center justify-center gap-1">
+          <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M19.47 4.53A9.86 9.86 0 0 0 12.1 2C6.64 2 2.16 6.23 2.01 11.61c-.08 2.86 1.04 5.47 3.06 7.36l-.65 2.66a.5.5 0 0 0 .68.58l2.89-1.15c1.25.43 2.6.66 4.01.66 5.52 0 10-4.48 10-10 0-2.67-1.04-5.18-2.53-6.89zm-2.46 11.46c-.29.81-1.66 1.54-2.29 1.63-.59.09-1.35.12-2.18-.13-.5-.16-1.15-.38-1.98-.74-3.49-1.51-5.77-5.02-5.95-5.25-.18-.23-1.42-1.89-1.42-3.6 0-1.71.9-2.55 1.22-2.89.32-.34.7-.43.93-.43.23 0 .47 0 .68.02.22.01.5-.09.79.59.29.7.99 2.41 1.08 2.59.09.18.14.4.04.63-.11.23-.16.38-.32.58-.16.2-.34.45-.49.59-.16.16-.32.34-.14.66.18.32.81 1.33 1.73 2.16 1.19 1.06 2.18 1.39 2.5 1.55.32.16.5.13.7-.07.2-.2.81-.94 1.03-1.26.22-.32.43-.27.72-.16.29.11 1.85.88 2.18 1.04.32.16.54.23.61.38.09.14.09.83-.2 1.64z"/>
+          </svg>
+          <span>Viber</span>
+        </a>
+        <a href="https://instagram.com/groomingpg" target="_blank" rel="noopener noreferrer" class="bg-pink-950/80 hover:bg-pink-900 text-pink-300 border border-pink-800/60 py-2.5 px-2 rounded-xl font-semibold transition flex flex-col items-center justify-center gap-1">
+          <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2zm-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6zm9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25zM12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/>
+          </svg>
+          <span>Instagram</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const THEME_MODE_KEY = 'grooming_crm_theme_mode';
+    function applyScheduledTheme() {
+      const savedMode = localStorage.getItem(THEME_MODE_KEY) || 'auto';
+      const hour = new Date().getHours();
+      const isDay = savedMode === 'auto' ? (hour >= 6 && hour < 18) : (savedMode === 'light');
+      document.documentElement.classList.toggle('dark', !isDay);
+    }
+    applyScheduledTheme();
+
+    const params = new URLSearchParams(window.location.search);
+    const owner = params.get('vlasnik') || 'Klijent';
+    const dog = params.get('pas') || 'Pas';
+    const breed = params.get('rasa') || 'Nije navedeno';
+    const hair = params.get('dlaka') || 'Nije navedeno';
+    const dateStr = params.get('datum') || '';
+    const dayName = params.get('dan') || '';
+    const monthName = params.get('mesec') || '';
+    const timeStr = params.get('vreme') || '';
+    const service = params.get('usluga') || '';
+    const locationText = params.get('lokacija') || 'F62R+XGW Podgorica, Montenegro';
+
+    const dayNum = dateStr && dateStr.split('-').length === 3 ? parseInt(dateStr.split('-')[2], 10) + '.' : '';
+    const scheduleParts = [dayName ? dayName + ',' : '', dayNum, monthName, timeStr ? 'u ' + timeStr + 'h' : ''].filter(Boolean);
+    const scheduleLabel = scheduleParts.join(' ').replace(', ,', ',') || 'Zakazani termin';
+
+    document.getElementById('resSchedule').textContent = scheduleLabel;
+    document.getElementById('resOwner').textContent = owner;
+    document.getElementById('resDog').textContent = dog;
+    document.getElementById('resBreed').textContent = breed;
+    document.getElementById('resHair').textContent = hair;
+
+    const locLink = document.getElementById('resLocationLink');
+    locLink.textContent = '📍 ' + locationText;
+    locLink.href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(locationText);
+
+    if (service) {
+      const badge = document.getElementById('resServiceBadge');
+      badge.textContent = service;
+      badge.classList.remove('hidden');
+    }
+
+    document.title = `GroomingPG — ${dog} (${owner})`;
+  </script>
+</body>
+</html>
